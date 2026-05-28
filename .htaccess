@@ -1,0 +1,61 @@
+# ============================================================
+# FORMA4 Imobiliária – .htaccess raiz
+# Apache 2.4 | Mod_Rewrite
+# ============================================================
+
+Options -Indexes
+Options -MultiViews
+
+# -------- Segurança: bloquear acesso a arquivos sensíveis ---
+<FilesMatch "\.(env|json|lock|sql|log|sh|bak|md)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Permite acesso ao composer.json só localmente (opcional)
+<Files "install.php">
+    # Remova este bloco após instalação, ou restrinja por IP
+    Order allow,deny
+    Allow from all
+</Files>
+
+# -------- Cabeçalhos de segurança ----------------------------
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# -------- Reescrita de URL -----------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Redirecionar para HTTPS (descomente em produção)
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Bloquear acesso direto a /includes
+    RewriteRule ^includes/.*$ - [F,L]
+
+    # Permitir arquivos e diretórios reais
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+</IfModule>
+
+# -------- Compressão GZIP ------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript
+</IfModule>
+
+# -------- Cache de assets ------------------------------------
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+</IfModule>

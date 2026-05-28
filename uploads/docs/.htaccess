@@ -1,0 +1,3 @@
+# Bloqueia acesso direto via browser (exceto pelo PHP via readfile)
+Order Deny,Allow
+Deny from all

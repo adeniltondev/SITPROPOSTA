@@ -1,0 +1,10 @@
+# Bloqueia acesso direto ao diretório admin via URL sem PHP
+Options -Indexes
+
+# Bloqueia requisições de outros sites (CSRF extra layer)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Permite só GET e POST
+    RewriteCond %{REQUEST_METHOD} !^(GET|POST)$
+    RewriteRule ^ - [F,L]
+</IfModule>

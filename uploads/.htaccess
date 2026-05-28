@@ -1,0 +1,21 @@
+# Bloqueia acesso direto a todos os arquivos da pasta /uploads/
+# Os arquivos são servidos apenas via PHP (submission-view.php para PDFs)
+
+Options -Indexes
+
+# Bloqueia execução de scripts PHP, CGI etc.
+<FilesMatch "\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|aspx|sh|cgi)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Permite apenas imagens (logos) e PDFs
+<FilesMatch "\.(jpg|jpeg|png|gif|webp|pdf)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Cabeçalhos de segurança
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+</IfModule>
