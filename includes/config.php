@@ -24,7 +24,7 @@ define('APP_NAME',    'Forma4 Imobiliária');
 define('APP_VERSION', '1.0.0');
 
 // URL base sem barra final (ex: https://seudominio.com.br)
-define('APP_URL', 'https://autorizacao.a4imobiliaria.com.br');
+define('APP_URL', 'propostadelocacao.a4imobiliaria.com.br');
 
 // Caminho absoluto raiz do projeto
 define('APP_PATH',    dirname(__DIR__));
