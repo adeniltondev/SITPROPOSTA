@@ -24,7 +24,7 @@ $form = $db->fetchOne('SELECT * FROM forms WHERE slug = ? LIMIT 1', [$slug]);
 if (!$form) {
     $db->query(
         "INSERT INTO forms (title, slug, description, fields, pdf_template, is_active) VALUES (?, ?, ?, ?, ?, 1)",
-        ['Proposta para Fiança de Locação', $slug, 'Proposta de fiador para locação de imóvel – A4 Imobiliária.', '[]', 'locacao']
+        ['Proposta para Fiança de Locação', $slug, 'Proposta de fiador para locação – A4 Imobiliária.', '[]', 'locacao']
     );
     $form = $db->fetchOne('SELECT * FROM forms WHERE slug = ? LIMIT 1', [$slug]);
 }
@@ -42,30 +42,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$success) {
         $errors[] = 'Token de segurança inválido. Recarregue a página e tente novamente.';
     } else {
         $textFields = [
-            // Imóvel
             'imovel_situado','codigo','bairro_imovel','valor_mensal','renda_familiar','destinacao',
-            // 1º Proponente
             'p1_nome','p1_rg','p1_orgao_emissor','p1_nascimento','p1_cpf_cnpj',
             'p1_profissao','p1_empresa','p1_estado_civil',
             'p1_conjuge','p1_conjuge_nascimento','p1_conjuge_rg','p1_conjuge_orgao','p1_conjuge_cpf',
             'p1_endereco','p1_complemento','p1_bairro','p1_cidade','p1_cep','p1_uf',
             'p1_telefone1','p1_telefone2','p1_telefone3','p1_email1','p1_email2',
-            // 2º Proponente
             'p2_nome','p2_rg','p2_orgao_emissor','p2_nascimento','p2_cpf_cnpj',
             'p2_profissao','p2_empresa','p2_estado_civil',
             'p2_conjuge','p2_conjuge_nascimento','p2_conjuge_rg','p2_conjuge_orgao','p2_conjuge_cpf',
             'p2_endereco','p2_complemento','p2_bairro','p2_cidade','p2_cep','p2_uf',
             'p2_telefone1','p2_telefone2','p2_telefone3','p2_email1','p2_email2',
-            // Informações complementares
-            'info1_nome','info1_contatos',
-            'info2_nome','info2_contatos',
+            'info1_nome','info1_contatos','info2_nome','info2_contatos',
         ];
-
         $data = [];
         foreach ($textFields as $f) {
             $data[$f] = trim(strip_tags($_POST[$f] ?? ''));
         }
-
         $required = ['p1_nome','p1_rg','p1_cpf_cnpj','p1_endereco','p1_bairro','p1_cidade','p1_cep','p1_uf','p1_telefone1','p1_email1'];
         foreach ($required as $r) {
             if (empty($data[$r])) {
@@ -73,46 +66,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$success) {
                 $errors[] = ucfirst(trim($label)) . ' (1º Proponente) é obrigatório.';
             }
         }
-
         if (empty($errors)) {
             $uploaded = $_FILES['doc_anexo'] ?? null;
+            $data['doc_anexo'] = '';
             if ($uploaded && $uploaded['error'] === UPLOAD_ERR_OK && $uploaded['size'] > 0) {
                 $saved = uploadFile($uploaded, DOCS_PATH, ALLOWED_DOC_TYPES);
                 $data['doc_anexo'] = $saved ? 'docs/' . $saved : '';
-            } else {
-                $data['doc_anexo'] = '';
             }
-
             $ip = getClientIP();
             $db->query(
                 'INSERT INTO submissions (form_id, data, ip_address, created_at) VALUES (?, ?, ?, NOW())',
                 [(int)$form['id'], json_encode($data, JSON_UNESCAPED_UNICODE), $ip]
             );
             $submId = $db->lastInsertId();
-
+            $pdfRelPath = null;
             try {
                 require_once __DIR__ . '/includes/pdf.php';
                 $submission = ['id' => $submId, 'data' => $data, 'created_at' => date('Y-m-d H:i:s'), 'ip_address' => $ip];
                 $pdfRelPath = generatePDF($form, $submission, $settings);
-                if ($pdfRelPath) {
-                    $db->query('UPDATE submissions SET pdf_path = ? WHERE id = ?', [$pdfRelPath, $submId]);
-                }
-            } catch (Exception $e) {
-                error_log('[FORMA4 PDF FIADOR] ' . $e->getMessage());
-                $pdfRelPath = null;
-            }
-
+                if ($pdfRelPath) $db->query('UPDATE submissions SET pdf_path = ? WHERE id = ?', [$pdfRelPath, $submId]);
+            } catch (Exception $e) { error_log('[FORMA4 PDF FIADOR] ' . $e->getMessage()); }
             try {
                 require_once __DIR__ . '/includes/mailer.php';
-                $submission['pdf_path'] = $pdfRelPath ?? null;
+                $submission['pdf_path'] = $pdfRelPath;
                 $sent = sendSubmissionEmail($submission, $form, $pdfRelPath ?? '', $settings);
-                if ($sent) {
-                    $db->query('UPDATE submissions SET email_sent = 1 WHERE id = ?', [$submId]);
-                }
-            } catch (Exception $e) {
-                error_log('[FORMA4 MAIL FIADOR] ' . $e->getMessage());
-            }
-
+                if ($sent) $db->query('UPDATE submissions SET email_sent = 1 WHERE id = ?', [$submId]);
+            } catch (Exception $e) { error_log('[FORMA4 MAIL FIADOR] ' . $e->getMessage()); }
             header('Location: ' . APP_URL . '/proposta-fiador.php?sucesso=1');
             exit;
         }
@@ -142,29 +121,73 @@ function fRadio(string $n, string $v): string {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        :root { --primary: <?= e($primaryColor) ?>; --border: #b0bec5; --label: #546e7a; --text: #1a2332; }
+
+        :root {
+            --primary: <?= e($primaryColor) ?>;
+            --border: #b0bec5;
+            --label: #546e7a;
+            --text: #1a2332;
+        }
+
         body { font-family: 'Inter', sans-serif; background: #e8edf2; min-height: 100vh; padding: 20px 10px 60px; }
-        .doc-wrap { max-width: 820px; margin: 0 auto; background: #fff; }
 
-        /* Header */
-        .doc-header { background: #fff; border-bottom: 3px solid var(--primary); padding: 24px 28px 18px; text-align: center; }
-        .doc-header img { max-height: 80px; margin-bottom: 12px; }
-        .doc-header h1 { font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text); }
-        .req-note { font-size: 11.5px; color: #c0392b; margin-top: 6px; }
+        .doc-wrap { max-width: 940px; margin: 0 auto; background: #fff; }
 
-        /* Body */
-        .doc-body { padding: 24px 28px; }
+        /* ── Banner header ── */
+        .doc-header {
+            background: linear-gradient(145deg, #f8fcff 0%, #edf5fa 100%);
+            position: relative; overflow: hidden;
+            border: 1px solid #d0e2ec;
+            border-bottom: 4px solid #0f6788;
+        }
+        .doc-header::before, .doc-header::after { content: none; }
 
-        /* Erros */
+        .header-ribbon {
+            background: linear-gradient(90deg, #08384d 0%, #0c5b78 65%, #117398 100%);
+            color: rgba(255,255,255,.92);
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            padding: 9px 28px; font-size: 11px; letter-spacing: .35px;
+            text-transform: uppercase; font-weight: 600;
+        }
+        .header-ribbon .dot { display: inline-block; width: 4px; height: 4px; background: rgba(255,255,255,.75); border-radius: 50%; margin: 0 6px; vertical-align: middle; }
+        .header-ribbon strong { color: #fff; font-weight: 800; }
+
+        .header-main { display: flex; align-items: center; gap: 24px; padding: 22px 30px; }
+
+        .doc-header .logo-box {
+            border-radius: 10px; padding: 10px 14px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            min-width: 148px; min-height: 92px;
+        }
+        .doc-header .logo-box img { max-height: 147px; max-width: 186px; object-fit: contain; }
+        .doc-header .logo-box .logo-text { color: #12465d; font-size: 18px; font-weight: 800; letter-spacing: -.5px; line-height: 1.15; text-align: center; }
+        .doc-header .logo-box .logo-text span { font-size: 10px; font-weight: 600; color: #3a6474; display: block; opacity: .92; letter-spacing: .4px; text-transform: uppercase; }
+
+        .doc-header .doc-title { flex: 1; text-align: right; }
+        .doc-title .kicker {
+            display: inline-block; padding: 5px 9px; border-radius: 4px;
+            border: 1px solid #c8dde8; background: #e8f3f9; color: #0f607e;
+            font-size: 10px; font-weight: 800; letter-spacing: .75px;
+            text-transform: uppercase; margin-bottom: 9px;
+        }
+        .doc-title h1 { color: #163d4f; font-size: 30px; font-weight: 800; text-transform: uppercase; letter-spacing: .8px; line-height: 1.08; }
+        .doc-title h1 span { display: block; margin-top: 5px; font-size: 14px; font-weight: 600; letter-spacing: 1.8px; color: #2f6880; }
+        .doc-title p { color: #4a6978; font-size: 12.5px; margin-top: 7px; letter-spacing: .1px; }
+        .doc-meta { margin-top: 11px; color: #53798b; font-size: 11px; font-weight: 600; letter-spacing: .45px; text-transform: uppercase; }
+
+        /* ── Body ── */
+        .doc-body { padding: 28px 36px 24px; }
+
+        /* ── Erros ── */
         .error-box { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 6px; padding: 12px 16px; margin-bottom: 20px; }
         .error-box p { color: #c53030; font-size: 13px; line-height: 1.7; }
 
-        /* Seção */
-        .section { margin-bottom: 20px; }
-        .section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; color: #fff; background: var(--text); padding: 5px 10px; margin-bottom: 0; }
+        /* ── Seção ── */
+        .section { margin-bottom: 22px; }
+        .section-title { font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--text); border-bottom: 2px solid var(--text); padding-bottom: 5px; margin-bottom: 0; }
 
-        /* Grade */
-        .fg { border: 1px solid var(--border); width: 100%; }
+        /* ── Grade ── */
+        .fg { border: 1px solid var(--border); border-collapse: collapse; width: 100%; }
         .fr { display: flex; border-bottom: 1px solid var(--border); }
         .fr:last-child { border-bottom: none; }
         .fc { flex: 1; border-right: 1px solid var(--border); padding: 4px 8px 5px; min-width: 0; display: flex; flex-direction: column; }
@@ -174,69 +197,114 @@ function fRadio(string $n, string $v): string {
             border: none; outline: none; font-size: 13px; font-family: 'Inter', sans-serif;
             color: var(--text); background: transparent; width: 100%; padding: 2px 0;
         }
-
         .fc-xs  { flex: 0 0 70px; }
-        .fc-sm  { flex: 0 0 120px; }
-        .fc-md  { flex: 0 0 180px; }
-        .fc-lg  { flex: 0 0 240px; }
+        .fc-sm  { flex: 0 0 130px; }
+        .fc-md  { flex: 0 0 190px; }
+        .fc-lg  { flex: 0 0 250px; }
         .fc-full { flex: 1 1 100%; }
 
-        /* Radio / check rows */
-        .check-row { display: flex; flex-wrap: wrap; gap: 5px 16px; padding: 6px 10px; border: 1px solid var(--border); border-top: none; align-items: center; }
+        /* ── Radio / check rows ── */
+        .check-row { display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 7px 10px; border: 1px solid var(--border); border-top: none; background: #fff; align-items: center; }
         .check-row.first { border-top: 1px solid var(--border); }
-        .check-row label { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text); cursor: pointer; }
-        .check-row input[type=radio] { width: 13px; height: 13px; accent-color: var(--primary); cursor: pointer; }
-        .check-row .row-label { font-size: 10px; font-weight: 700; color: var(--label); text-transform: uppercase; margin-right: 6px; }
+        .check-row label { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text); cursor: pointer; white-space: nowrap; }
+        .check-row input[type=radio] { width: 13px; height: 13px; cursor: pointer; accent-color: var(--primary); }
+        .check-row .row-label { font-size: 10px; font-weight: 700; color: var(--label); text-transform: uppercase; letter-spacing: .3px; margin-right: 6px; }
         .obs-note { font-size: 11px; color: #c0392b; padding: 4px 10px; border: 1px solid var(--border); border-top: none; background: #fff8f8; }
 
-        /* Upload */
-        .upload-area { border: 2px dashed var(--border); border-radius: 6px; padding: 20px; text-align: center; background: #f8fafc; margin-top: 10px; }
-        .upload-area input[type=file] { font-size: 13px; color: var(--text); }
-        .upload-area p { font-size: 11px; color: #94a3b8; margin-top: 6px; }
-        .upload-btn { display: inline-block; background: var(--primary); color: #fff; border: none; padding: 9px 22px; font-size: 13px; font-weight: 600; border-radius: 5px; cursor: pointer; font-family: 'Inter',sans-serif; margin-bottom: 8px; }
+        /* ── Upload ── */
+        .docs-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 12px; }
+        .doc-upload-item { background: #f8fafc; border: 1px dashed #b0bec5; border-radius: 6px; padding: 16px 18px; text-align: center; }
+        .doc-upload-item label.doc-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: var(--label); display: block; margin-bottom: 8px; }
+        .doc-upload-item input[type=file] { font-size: 12px; width: 100%; color: #374151; }
+        .doc-upload-item p { font-size: 10px; color: #94a3b8; margin-top: 4px; }
+        .upload-btn-label {
+            display: inline-block; background: var(--primary); color: #fff;
+            padding: 9px 22px; font-size: 13px; font-weight: 600; border-radius: 5px;
+            cursor: pointer; margin-bottom: 8px; font-family: 'Inter', sans-serif;
+        }
 
-        /* Actions */
-        .form-actions { padding: 20px 28px; border-top: 1px solid #e2e8f0; background: #f8fafc; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-        .form-actions p { font-size: 12px; color: #64748b; }
-        .btn-enviar { background: var(--primary); color: #fff; border: none; padding: 12px 44px; font-size: 15px; font-weight: 600; border-radius: 7px; cursor: pointer; font-family: 'Inter', sans-serif; transition: opacity .15s; }
-        .btn-enviar:hover { opacity: .88; }
-
-        /* Sucesso */
-        .success-wrap { text-align: center; padding: 70px 40px; }
-        .success-icon { width: 72px; height: 72px; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 30px; }
-        .success-wrap h2 { font-size: 22px; font-weight: 700; color: #15803d; margin-bottom: 8px; }
-        .success-wrap p { color: #64748b; font-size: 14px; line-height: 1.7; }
-
-        /* Footer */
+        /* ── Rodapé ── */
         .doc-footer-bar { background: #0a3d52; color: rgba(255,255,255,.8); font-size: 10.5px; text-align: center; padding: 10px 20px; line-height: 1.7; }
         .doc-footer-bar a { color: rgba(255,255,255,.85); }
 
-        /* Responsivo */
+        /* ── Submit ── */
+        .form-actions { padding: 20px 36px; border-top: 1px solid #e2e8f0; background: #f8fafc; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+        .form-actions p { font-size: 12px; color: #64748b; }
+        .btn-enviar { background: var(--primary); color: #fff; border: none; padding: 14px 44px; font-size: 15px; font-weight: 600; border-radius: 7px; cursor: pointer; font-family: 'Inter', sans-serif; letter-spacing: .3px; transition: opacity .15s; }
+        .btn-enviar:hover { opacity: .88; }
+
+        /* ── Sucesso ── */
+        .success-wrap { text-align: center; padding: 70px 40px; }
+        .success-icon { width: 72px; height: 72px; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 30px; }
+        .success-wrap h2 { font-size: 24px; font-weight: 700; color: #15803d; margin-bottom: 8px; }
+        .success-wrap p { color: #64748b; font-size: 14px; line-height: 1.7; }
+
+        /* ── Responsivo tablet ── */
         @media (max-width: 860px) {
+            body { padding: 12px 6px 48px; }
+            .header-main { padding: 18px 20px; gap: 16px; }
+            .doc-title h1 { font-size: 24px; }
+            .doc-body { padding: 22px 20px 20px; }
+            .form-actions { padding: 16px 20px; }
             .fr { flex-wrap: wrap; }
-            .fc-xs { flex: 1 1 60px; } .fc-sm { flex: 1 1 100px; } .fc-md { flex: 1 1 140px; } .fc-lg { flex: 1 1 180px; }
+            .fc-xs { flex: 1 1 60px; } .fc-sm { flex: 1 1 110px; } .fc-md { flex: 1 1 150px; } .fc-lg { flex: 1 1 200px; }
         }
+
+        /* ── Responsivo mobile ── */
         @media (max-width: 640px) {
             body { padding: 0; background: #fff; }
-            .doc-body { padding: 16px 14px; }
+            .doc-body { padding: 16px 14px 18px; }
+            .doc-header { border-left: none; border-right: none; border-top: none; }
+            .header-ribbon { padding: 8px 12px; font-size: 9.5px; justify-content: center; flex-wrap: wrap; gap: 4px; }
+            .header-main { flex-direction: column; align-items: center; text-align: center; padding: 14px 14px 16px; gap: 12px; }
+            .doc-header .doc-title { text-align: center; }
+            .doc-title h1 { font-size: 20px; }
+            .doc-header .logo-box { min-width: 110px; min-height: unset; padding: 8px 10px; }
+            .doc-header .logo-box img { max-height: 80px; max-width: 140px; }
+            .form-actions { flex-direction: column; padding: 16px 14px; text-align: center; }
+            .btn-enviar { width: 100%; padding: 14px 20px; }
             .fr { flex-direction: column; }
             .fc, .fc-xs, .fc-sm, .fc-md, .fc-lg, .fc-full { flex: 1 1 100%; border-right: none; border-bottom: 1px solid var(--border); padding: 7px 10px; }
             .fc:last-child, .fc-xs:last-child, .fc-sm:last-child, .fc-md:last-child, .fc-lg:last-child, .fc-full:last-child { border-bottom: none; }
-            .form-actions { flex-direction: column; padding: 16px 14px; text-align: center; }
-            .btn-enviar { width: 100%; }
+            .fc input[type=text], .fc input[type=email], .fc input[type=date], .fc input[type=number] { font-size: 14px; padding: 4px 0; }
+            .check-row { flex-wrap: wrap; gap: 8px 14px; padding: 10px 10px; }
+            .check-row label { font-size: 13px; }
+            .success-wrap { padding: 48px 20px; }
+            .success-wrap h2 { font-size: 20px; }
+        }
+
+        @media (max-width: 380px) {
+            .doc-title h1 { font-size: 17px; }
+            .header-ribbon { font-size: 8.5px; }
         }
     </style>
 </head>
 <body>
+
 <div class="doc-wrap">
 
     <!-- HEADER -->
     <div class="doc-header">
-        <?php if ($logoSrc): ?>
-            <img src="<?= e($logoSrc) ?>" alt="<?= e($appName) ?>">
-        <?php endif; ?>
-        <h1>Proposta para Fiança de Locação</h1>
-        <p class="req-note">** indica campos obrigatórios</p>
+        <div class="header-ribbon">
+            <span>Formulário Oficial</span>
+            <span><span class="dot"></span> Preenchimento Online <span class="dot"></span></span>
+            <span><strong><?= e($appName) ?></strong></span>
+        </div>
+        <div class="header-main">
+            <div class="logo-box">
+                <?php if ($logoSrc): ?>
+                    <img src="<?= e($logoSrc) ?>" alt="<?= e($appName) ?>">
+                <?php else: ?>
+                    <div class="logo-text"><?= e($appName) ?><span>Imobiliária</span></div>
+                <?php endif; ?>
+            </div>
+            <div class="doc-title">
+                <span class="kicker">Formulário Oficial</span>
+                <h1>Proposta para Fiança<span>de Locação</span></h1>
+                <p>Preencha os dados do(s) fiador(es) para a proposta de locação</p>
+                <div class="doc-meta"><span style="color:#c0392b">**</span> indica campos obrigatórios</div>
+            </div>
+        </div>
     </div>
 
     <?php if ($success): ?>
@@ -259,7 +327,7 @@ function fRadio(string $n, string $v): string {
 
             <!-- ══ DADOS DO IMÓVEL ══ -->
             <div class="section">
-                <div class="fg" style="margin-bottom:4px;">
+                <div class="fg">
                     <div class="fr">
                         <div class="fc fc-full">
                             <label>Proponho-me a alcançar o imóvel situado <span style="color:#c0392b">**</span></label>
@@ -287,7 +355,7 @@ function fRadio(string $n, string $v): string {
                         </div>
                     </div>
                 </div>
-                <div class="check-row first">
+                <div class="check-row" style="border-top:1px solid var(--border);">
                     <span class="row-label">Destinação a que se deve o imóvel <span style="color:#c0392b">**</span></span>
                     <?php foreach (['Residencial','Comercial','Misto'] as $d): ?>
                         <label><input type="radio" name="destinacao" value="<?= $d ?>" <?= fRadio('destinacao',$d) ?>><?= $d ?></label>
@@ -374,7 +442,7 @@ function fRadio(string $n, string $v): string {
                             <input type="text" name="p1_endereco" value="<?= fv('p1_endereco') ?>" required>
                         </div>
                         <div class="fc fc-full">
-                            <label>Complemento <span style="color:#c0392b">**</span></label>
+                            <label>Complemento</label>
                             <input type="text" name="p1_complemento" value="<?= fv('p1_complemento') ?>">
                         </div>
                     </div>
@@ -402,11 +470,11 @@ function fRadio(string $n, string $v): string {
                             <input type="text" name="p1_telefone1" value="<?= fv('p1_telefone1') ?>" data-mask="phone" required>
                         </div>
                         <div class="fc fc-full">
-                            <label>Telefone 2 <span style="color:#c0392b">**</span></label>
+                            <label>Telefone 2</label>
                             <input type="text" name="p1_telefone2" value="<?= fv('p1_telefone2') ?>" data-mask="phone">
                         </div>
                         <div class="fc fc-full">
-                            <label>Telefone 3 <span style="color:#c0392b">**</span></label>
+                            <label>Telefone 3</label>
                             <input type="text" name="p1_telefone3" value="<?= fv('p1_telefone3') ?>" data-mask="phone">
                         </div>
                     </div>
@@ -416,7 +484,7 @@ function fRadio(string $n, string $v): string {
                             <input type="email" name="p1_email1" value="<?= fv('p1_email1') ?>" required>
                         </div>
                         <div class="fc fc-full">
-                            <label>E-mail 2 <span style="color:#c0392b">**</span></label>
+                            <label>E-mail 2</label>
                             <input type="email" name="p1_email2" value="<?= fv('p1_email2') ?>">
                         </div>
                     </div>
@@ -550,7 +618,7 @@ function fRadio(string $n, string $v): string {
                 </div>
             </div>
 
-            <!-- ══ INFORMAÇÕES COMPLEMENTARES 1º PROPONENTE ══ -->
+            <!-- ══ INFORMAÇÕES COMPLEMENTARES 1º ══ -->
             <div class="section">
                 <div class="section-title">Informações Complementares do Primeiro Proponente</div>
                 <div class="fg">
@@ -567,7 +635,7 @@ function fRadio(string $n, string $v): string {
                 </div>
             </div>
 
-            <!-- ══ INFORMAÇÕES COMPLEMENTARES 2º PROPONENTE ══ -->
+            <!-- ══ INFORMAÇÕES COMPLEMENTARES 2º ══ -->
             <div class="section">
                 <div class="section-title">Informações Complementares do Segundo Proponente</div>
                 <div class="fg">
@@ -586,19 +654,20 @@ function fRadio(string $n, string $v): string {
 
             <!-- ══ DOCUMENTOS ══ -->
             <div class="section">
-                <div class="section-title">Anexar Documentos <span style="font-weight:400;text-transform:none;font-size:11px"> **</span></div>
-                <div class="upload-area">
-                    <p style="font-size:13px;font-weight:600;color:#334155;margin-bottom:8px;">Solte os arquivos aqui ou</p>
-                    <label class="upload-btn" for="doc_anexo_input">Anexar arquivos</label>
-                    <input id="doc_anexo_input" type="file" name="doc_anexo" accept=".jpg,.gif,.mp4,.pdf,.png,.doc,.docx,.xls,.xlsx" style="display:none;" onchange="this.previousElementSibling.previousElementSibling.textContent = this.files[0]?.name || 'Solte os arquivos aqui ou'">
-                    <p>Tipos de arquivo aceitos: jpg, gif, mp4, pdf, png. Máx. tamanho do arquivo: 10 MB.</p>
+                <div class="section-title">Anexar Documentos <span style="font-weight:400;text-transform:none;font-size:11px;color:#64748b"> (obrigatório)</span></div>
+                <div class="docs-grid">
+                    <div class="doc-upload-item">
+                        <label class="doc-label">Documentos</label>
+                        <p style="margin-bottom:10px;">Solte os arquivos aqui ou</p>
+                        <label class="upload-btn-label" for="doc_anexo_id">Anexar arquivos</label>
+                        <input id="doc_anexo_id" type="file" name="doc_anexo" accept=".jpg,.gif,.mp4,.pdf,.png,.doc,.docx,.xls,.xlsx" style="display:none;">
+                        <p>Tipos de arquivo aceitos: jpg, gif, mp4, pdf, png. Máx. tamanho do arquivo: 10 MB.</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Nota legal -->
-            <p style="font-size:11px;color:#64748b;text-align:center;margin-top:10px;line-height:1.6;">
-                A presente proposta é apenas de interesse de participação na locação como fiador, não tendo valor contratual.
-                Com seja aprovada, os dados nela contidos serão utilizados para confecção do contrato de locação, onde estarão estabelecidas as cláusulas contratuais.
+            <p style="font-size:11px;color:#374151;text-align:justify;margin-top:14px;line-height:1.7;padding:12px 14px;background:#f8fafc;border-left:3px solid var(--primary);">
+                A presente proposta é apenas de interesse de participação na locação como fiador, não tendo valor contratual. Com seja aprovada, os dados nela contidos serão utilizados para confecção do contrato de locação, onde estarão estabelecidas as cláusulas contratuais.
             </p>
 
         </div><!-- /.doc-body -->
@@ -612,7 +681,9 @@ function fRadio(string $n, string $v): string {
     <?php endif; ?>
 
     <div class="doc-footer-bar">
-        <?= e($appName) ?> &nbsp;|&nbsp; Orgulhosamente desenvolvido com Adenilton.
+        <?= e($appName) ?> &nbsp;|&nbsp; Av. Hermes Fontes, nº 1524, Bairro Luzia – CEP 49.048.010 – Aracaju/SE
+        &nbsp;|&nbsp; (79) 3304-0000 / 99691-0000 &nbsp;|&nbsp;
+        <a href="mailto:contato@a4imobiliaria.com.br">contato@a4imobiliaria.com.br</a>
     </div>
 </div>
 
