@@ -19,7 +19,13 @@ if (!isset($sysSettings)) {
 $appName      = e($sysSettings['app_name']     ?? APP_NAME);
 $primaryColor = e($sysSettings['primary_color'] ?? '#2563EB');
 $logoFile     = $sysSettings['logo_path'] ?? '';
-$appUrl       = rtrim($sysSettings['app_url'] ?? APP_URL, '/');
+// Usa sempre APP_URL da constante para garantir assets corretos mesmo com DB desatualizado
+$appUrl       = rtrim(APP_URL, '/');
+
+// Sincroniza app_url no banco se estiver desatualizado
+if (empty($sysSettings['app_url']) || rtrim($sysSettings['app_url'], '/') !== $appUrl) {
+    setSetting('app_url', $appUrl);
+}
 $pageTitle    = $pageTitle ?? 'Painel';
 $activeMenu   = $activeMenu ?? '';
 
