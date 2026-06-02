@@ -361,11 +361,10 @@ function fRadio(string $n, string $v): string {
                             <input type="text" name="codigo_imovel" value="<?= fv('codigo_imovel') ?>">
                         </div>
                         <div class="fc fc-sm">
-                            <label>Prazo a contratar (Meses) <span style="color:#c0392b">**</span></label>
-                            <select name="prazo_meses">
-                                <?php foreach ([12,24,30,36,48,60] as $m): ?>
-                                    <option value="<?= $m ?>" <?= fv('prazo_meses','12') == $m ? 'selected' : '' ?>><?= $m ?></option>
-                                <?php endforeach; ?>
+                            <label>Prazo a contratar <span style="color:#c0392b">**</span></label>
+                            <select name="prazo_meses" id="prazo_meses">
+                                <option value="36" <?= fv('prazo_meses','36') == '36' ? 'selected' : '' ?>>36 meses (Residencial)</option>
+                                <option value="60" <?= fv('prazo_meses','36') == '60' ? 'selected' : '' ?>>60 meses (Comercial)</option>
                             </select>
                         </div>
                         <div class="fc fc-full">
