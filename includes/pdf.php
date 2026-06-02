@@ -357,58 +357,48 @@ function buildAuthorizationHTML(array $form, array $submission, array $data, arr
     return <<<HTML
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><meta charset="UTF-8">
-<style>{$css}</style>
-</head>
+<head><meta charset="UTF-8"><style>{$css}</style></head>
 <body>
 
-<!-- ═══ HEADER RIBBON ═══ -->
-<div class="header-ribbon">
+<div class="ph-wrap">
+  <div class="ph-inner">
+    <table><tr>
+      <td class="ph-logo-cell"><div class="logo-frame">{$logoCell}</div></td>
+      <td class="ph-title-cell">
+        <div class="ph-badge">Documento Contratual</div>
+        <div class="ph-h1">Autoriza&ccedil;&atilde;o de Venda</div>
+        <span class="ph-sub">Com Exclusividade</span>
+        <span class="ph-desc">Contrato de intermedia&ccedil;&atilde;o imobili&aacute;ria &mdash; {$appName}</span>
+      </td>
+      <td class="ph-meta-cell">
+        <div class="ph-protocol">N&ordm; AVE-{$submId}</div>
+        <div class="ph-date">Emitido em {$submDate}</div>
+        <div>{$excBadge}</div>
+      </td>
+    </tr></table>
+  </div>
+</div>
+<div class="ph-accent"></div>
+
+<div class="info-strip">
   <table><tr>
-    <td>Documento Contratual</td>
-    <td class="hr-center">Preenchimento Eletr&ocirc;nico</td>
-    <td class="hr-right"><strong>{$appName}</strong></td>
+    <td><span class="is-lbl">Prazo de Exclusividade</span><span class="is-val">{$prazo} dias</span></td>
+    <td><span class="is-lbl">Comiss&atilde;o</span><span class="is-val">{$comissao}%</span></td>
+    <td class="text-right"><span class="is-lbl">Valor M&iacute;nimo de Venda</span><span class="is-val" style="color:#166534;">R$ {$valorMin}</span></td>
   </tr></table>
 </div>
 
-<!-- ═══ HEADER MAIN ═══ -->
-<div class="header-main">
-  <table><tr>
-    <td class="hm-logo"><div class="logo-box-wrap">{$logoCell}</div></td>
-    <td class="hm-title">
-      <div class="hm-kicker">Formul&aacute;rio Oficial</div>
-      <div class="hm-h1">Autoriza&ccedil;&atilde;o de Venda</div>
-      <span class="hm-sub">Com Exclusividade</span>
-      <div class="hm-desc">Contrato de intermedia&ccedil;&atilde;o imobili&aacute;ria</div>
-      <div class="hm-meta">Validade jur&iacute;dica mediante preenchimento completo e aceita&ccedil;&atilde;o das cl&aacute;usulas</div>
-    </td>
-  </tr></table>
-</div>
+<div class="page-body">
 
-<!-- ═══ META STRIP ═══ -->
-<div class="meta-strip">
-  <table><tr>
-    <td style="width:65%">
-      <span class="badge-num">N&ordm; AVE-{$submId}</span>
-      &nbsp;&nbsp;&#128197;&nbsp;{$submDate}
-      &nbsp;&nbsp;&#9201;&nbsp;Prazo: <strong>{$prazo} dias</strong>
-    </td>
-    <td class="meta-right">{$excBadge}</td>
-  </tr></table>
-</div>
-
-<div class="content">
-
-  <!-- ═════ DADOS DO CONTRATANTE ═════ -->
-  <div class="section">
-    <div class="sec-head">Dados do Contratante</div>
+  <div class="card">
+    <div class="card-head"><span class="ch-title">&#128100; &nbsp;Dados do Contratante</span></div>
     <table class="ft">
       <tr>
-        <td style="width:60%"><span class="fl">Nome / Raz&atilde;o Social</span><span class="fv">{$nomeContratante}</span></td>
+        <td colspan="2"><span class="fl">Nome / Raz&atilde;o Social</span><span class="fv">{$nomeContratante}</span></td>
         <td><span class="fl">Sexo</span><span class="fv">{$sexo}</span></td>
       </tr>
       <tr class="alt">
-        <td><span class="fl">Data de Nascimento</span><span class="fv">{$dataNasc}</span></td>
+        <td><span class="fl">Nascimento</span><span class="fv">{$dataNasc}</span></td>
         <td><span class="fl">RG n&ordm;</span><span class="fv">{$rg}</span></td>
         <td><span class="fl">&Oacute;rg&atilde;o Expedidor</span><span class="fv">{$orgaoExp}</span></td>
       </tr>
@@ -422,53 +412,44 @@ function buildAuthorizationHTML(array $form, array $submission, array $data, arr
         <td colspan="2"><span class="fl">Nome de Fantasia</span><span class="fv">{$nomeFant}</span></td>
       </tr>
       <tr>
-        <td colspan="3"><span class="fl">Estado Civil</span><span class="fv">{$estadoCivil}</span></td>
-      </tr>
-      <tr class="alt">
-        <td colspan="2"><span class="fl">C&ocirc;njuge</span><span class="fv">{$conjuge}</span></td>
+        <td><span class="fl">Estado Civil</span><span class="fv">{$estadoCivil}</span></td>
+        <td><span class="fl">C&ocirc;njuge</span><span class="fv">{$conjuge}</span></td>
         <td><span class="fl">Telefones</span><span class="fv">{$telefones}</span></td>
       </tr>
-      <tr>
+      <tr class="alt">
         <td colspan="3"><span class="fl">Endere&ccedil;o Residencial</span><span class="fv">{$endRes}</span></td>
       </tr>
-      <tr class="alt">
+      <tr>
         <td><span class="fl">Bairro</span><span class="fv">{$bairroRes}</span></td>
         <td><span class="fl">Cidade / UF</span><span class="fv">{$cidUfRes}</span></td>
         <td><span class="fl">CEP</span><span class="fv">{$cepRes}</span></td>
       </tr>
-      <tr>
+      <tr class="alt">
         <td><span class="fl">Telefone Fixo</span><span class="fv">{$telFixo}</span></td>
         <td colspan="2"><span class="fl">Celular / WhatsApp</span><span class="fv">{$celular}</span></td>
       </tr>
-      <tr class="alt">
+      <tr>
         <td colspan="3"><span class="fl">Endere&ccedil;o Comercial</span><span class="fv">{$endCom}</span></td>
       </tr>
-      <tr>
+      <tr class="alt">
         <td><span class="fl">Bairro</span><span class="fv">{$bairroCom}</span></td>
         <td><span class="fl">Cidade / UF</span><span class="fv">{$cidUfCom}</span></td>
         <td><span class="fl">CEP</span><span class="fv">{$cepCom}</span></td>
       </tr>
-      <tr class="alt">
+      <tr>
         <td colspan="3"><span class="fl">E-mail(s)</span><span class="fv">{$emails}</span></td>
       </tr>
     </table>
   </div>
 
-  <!-- ═════ PARÁGRAFO LEGAL ═════ -->
   <div class="legal">
-    O CONTRATANTE acima, propriet&aacute;rio e leg&iacute;timo possuidor do im&oacute;vel abaixo relacionado, contrata a
-    <strong>{$appName}</strong>, inscrita no Conselho Regional dos corretores de im&oacute;veis com o n&ordm; 218 PJ,
-    para promover de forma <strong>EXCLUSIVA</strong> a <strong>VENDA</strong> do seu im&oacute;vel abaixo descrito,
-    pelo prazo m&iacute;nimo de <strong>({$prazo}) dias</strong>, prorrog&aacute;vel automaticamente por per&iacute;odo
-    igual e sucessivo, at&eacute; que uma das partes se manifeste em contr&aacute;rio, por escrito, pelo pre&ccedil;o e
-    condi&ccedil;&otilde;es estipuladas nesta autoriza&ccedil;&atilde;o de <strong>VENDA</strong>.
+    O CONTRATANTE acima, propriet&aacute;rio e leg&iacute;timo possuidor do im&oacute;vel abaixo relacionado, contrata a <strong>{$appName}</strong>, inscrita no CRECI n&ordm; 218 PJ, para promover de forma <strong>EXCLUSIVA</strong> a <strong>VENDA</strong> do seu im&oacute;vel abaixo descrito, pelo prazo m&iacute;nimo de <strong>({$prazo}) dias</strong>, prorrog&aacute;vel automaticamente por per&iacute;odo igual e sucessivo, at&eacute; que uma das partes se manifeste em contr&aacute;rio, por escrito, pelo pre&ccedil;o e condi&ccedil;&otilde;es estipuladas nesta autoriza&ccedil;&atilde;o de <strong>VENDA</strong>.
   </div>
 
-  <!-- ═════ DADOS DO IMÓVEL ═════ -->
-  <div class="section">
-    <div class="sec-head">Dados do Im&oacute;vel</div>
-    <div class="sec-sub"><strong>Tipo:</strong> {$tipoImovel} &nbsp;&nbsp;|&nbsp;&nbsp; <strong>Situa&ccedil;&atilde;o:</strong> {$situacaoImovel}</div>
-    <table class="ft" style="border-top:none;">
+  <div class="card">
+    <div class="card-head"><span class="ch-title">&#127968; &nbsp;Dados do Im&oacute;vel</span></div>
+    <div class="card-sub"><strong>Tipo:</strong> {$tipoImovel} &nbsp;&nbsp;|&nbsp;&nbsp; <strong>Situa&ccedil;&atilde;o:</strong> {$situacaoImovel}</div>
+    <table class="ft">
       <tr>
         <td colspan="3"><span class="fl">Endere&ccedil;o</span><span class="fv">{$endImovel}</span></td>
       </tr>
@@ -481,15 +462,14 @@ function buildAuthorizationHTML(array $form, array $submission, array $data, arr
         <td colspan="3"><span class="fl">Ponto de Refer&ecirc;ncia</span><span class="fv">{$pontoRef}</span></td>
       </tr>
       <tr class="alt">
-        <td><span class="fl">N&ordm; e Registro do Im&oacute;vel</span><span class="fv">{$registroImovel}</span></td>
-        <td colspan="2"><span class="fl">Matr&iacute;cula de IPTU n&ordm;</span><span class="fv">{$matriculaIptu}</span></td>
+        <td><span class="fl">N&ordm; Registro do Im&oacute;vel</span><span class="fv">{$registroImovel}</span></td>
+        <td colspan="2"><span class="fl">Matr&iacute;cula IPTU</span><span class="fv">{$matriculaIptu}</span></td>
       </tr>
     </table>
   </div>
 
-  <!-- ═════ DESCRIÇÃO ═════ -->
-  <div class="section">
-    <div class="sec-head">Descri&ccedil;&atilde;o do Im&oacute;vel</div>
+  <div class="card">
+    <div class="card-head"><span class="ch-title">&#128203; &nbsp;Descri&ccedil;&atilde;o do Im&oacute;vel</span></div>
     <table class="ft">
       <tr>
         <td><span class="fl">Dorm.</span><span class="fv">{$numDorm}</span></td>
@@ -499,32 +479,29 @@ function buildAuthorizationHTML(array $form, array $submission, array $data, arr
         <td><span class="fl">&Aacute;rea m&sup2;</span><span class="fv">{$areaPriv}</span></td>
       </tr>
       <tr class="alt">
-        <td colspan="2"><span class="fl">Varanda?</span><span class="fv">{$temVaranda}</span></td>
-        <td colspan="3"><span class="fl">Elevador?</span><span class="fv">{$temElevador}</span></td>
+        <td><span class="fl">Varanda?</span><span class="fv">{$temVaranda}</span></td>
+        <td><span class="fl">Elevador?</span><span class="fv">{$temElevador}</span></td>
+        <td><span class="fl">Lazer?</span><span class="fv">{$lazer}</span></td>
+        <td colspan="2"><span class="fl">Garagem Coberta?</span><span class="fv">{$garagemCob}</span></td>
       </tr>
       <tr>
-        <td colspan="2"><span class="fl">Lazer Completo?</span><span class="fv">{$lazer}</span></td>
-        <td colspan="3"><span class="fl">Garagem Coberta?</span><span class="fv">{$garagemCob}</span></td>
-      </tr>
-      <tr class="alt">
         <td colspan="5"><span class="fl">Observa&ccedil;&otilde;es</span><span class="fv" style="min-height:16px;">{$obsDesc}</span></td>
       </tr>
     </table>
   </div>
 
-  <!-- ═════ CONDIÇÕES ═════ -->
-  <div class="section">
-    <div class="sec-head">Condi&ccedil;&otilde;es Pretendidas</div>
+  <div class="card">
+    <div class="card-head"><span class="ch-title">&#128176; &nbsp;Condi&ccedil;&otilde;es de Venda</span></div>
     <table class="ft">
       <tr>
-        <td style="width:28%"><span class="fl">Valor M&iacute;nimo de Venda R$</span><span class="fv" style="font-size:10px;font-weight:bold;color:#1a6e8e;">{$valorMin}</span></td>
+        <td style="width:30%"><span class="fl">Valor M&iacute;nimo R$</span><span class="fv-money">R$ {$valorMin}</span></td>
         <td><span class="fl">Por Extenso</span><span class="fv">{$valorMinExtenso}</span></td>
       </tr>
       <tr class="alt">
         <td colspan="2"><span class="fl">Observa&ccedil;&otilde;es do Pre&ccedil;o</span><span class="fv" style="min-height:13px;">{$obsPreco}</span></td>
       </tr>
       <tr>
-        <td><span class="fl">Valor do Condom&iacute;nio R$</span><span class="fv">{$valorCondo}</span></td>
+        <td><span class="fl">Condom&iacute;nio R$</span><span class="fv">{$valorCondo}</span></td>
         <td><span class="fl">Por Extenso</span><span class="fv">{$condoExtenso}</span></td>
       </tr>
       <tr class="alt">
@@ -534,40 +511,22 @@ function buildAuthorizationHTML(array $form, array $submission, array $data, arr
     </table>
   </div>
 
-  <!-- ═════ CLÁUSULAS ═════ -->
-  <div class="clause"><span class="cl">a)</span>&nbsp;
-    Sobre o valor da <strong>VENDA</strong> do im&oacute;vel contratado, o CONTRATANTE pagar&aacute; a CONTRATADA {$comissao}%,
-    pagamento esse que dever&aacute; ser feito no ato do recebimento dos valores da referida negocia&ccedil;&atilde;o.
-  </div>
-  <div class="clause"><span class="cl">b)</span>&nbsp;
-    Nos termos do presente, o(a) CONTRATANTE autoriza &agrave; <strong>{$appName}</strong> a ofertar publicamente o im&oacute;vel
-    de sua propriedade acima descrito, cuja &agrave;s custas ser&atilde;o de responsabilidade da CONTRATADA, fotografar o im&oacute;vel
-    e suas depend&ecirc;ncias internas fazendo se publicar as fotos nos ve&iacute;culos e meios de comunica&ccedil;&atilde;o que
-    desejar, inclusive na internet, afixar placas, faixas ou letreiros no im&oacute;vel, realizar visita&ccedil;&otilde;es e
-    demonstra&ccedil;&otilde;es aos interessados.
-  </div>
-  <div class="clause"><span class="cl">c)</span>&nbsp;
-    O Propriet&aacute;rio declara que o dito im&oacute;vel encontra-se livre e desembara&ccedil;ado de quaisquer &ocirc;nus ou
-    restri&ccedil;&otilde;es que impe&ccedil;a sua <strong>VENDA</strong>, comprometendo-se em apresentar &agrave;s suas custas
-    a documenta&ccedil;&atilde;o exigida em transa&ccedil;&otilde;es de VENDA, t&atilde;o logo que solicitado.
-  </div>
-  <p class="agree-text">
-    E por estarem de pleno acordo, assinam a presente op&ccedil;&atilde;o em 02 (duas) vias de igual teor, na presen&ccedil;a
-    de duas testemunhas, ficando eleito o foro da comarca de Aracaju para dirimir qualquer d&uacute;vida que venha a ocorrer.
-  </p>
-  <p class="date-line">Aracaju, &nbsp;&nbsp;&nbsp; de &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; de {$anoAtual}.</p>
+  <div class="clause"><span class="cl">a)</span>&nbsp;Sobre o valor da <strong>VENDA</strong> do im&oacute;vel contratado, o CONTRATANTE pagar&aacute; a CONTRATADA {$comissao}%, pagamento esse que dever&aacute; ser feito no ato do recebimento dos valores da referida negocia&ccedil;&atilde;o.</div>
+  <div class="clause"><span class="cl">b)</span>&nbsp;Nos termos do presente, o(a) CONTRATANTE autoriza &agrave; <strong>{$appName}</strong> a ofertar publicamente o im&oacute;vel de sua propriedade acima descrito, fotografar o im&oacute;vel e suas depend&ecirc;ncias internas fazendo se publicar as fotos nos ve&iacute;culos e meios de comunica&ccedil;&atilde;o que desejar, inclusive na internet, afixar placas, faixas ou letreiros no im&oacute;vel, realizar visita&ccedil;&otilde;es e demonstra&ccedil;&otilde;es aos interessados.</div>
+  <div class="clause"><span class="cl">c)</span>&nbsp;O Propriet&aacute;rio declara que o dito im&oacute;vel encontra-se livre e desembara&ccedil;ado de quaisquer &ocirc;nus ou restri&ccedil;&otilde;es que impe&ccedil;a sua <strong>VENDA</strong>, comprometendo-se em apresentar &agrave;s suas custas a documenta&ccedil;&atilde;o exigida em transa&ccedil;&otilde;es de VENDA, t&atilde;o logo que solicitado.</div>
+  <p class="agree-text">E por estarem de pleno acordo, assinam a presente op&ccedil;&atilde;o em 02 (duas) vias de igual teor, na presen&ccedil;a de duas testemunhas, ficando eleito o foro da comarca de Aracaju para dirimir qualquer d&uacute;vida que venha a ocorrer.</p>
+  <p class="date-line">Aracaju, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; de &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; de {$anoAtual}.</p>
 
-  <!-- ═════ ASSINATURAS ═════ -->
-  <table class="sig-table">
-    <tr>
-      <td><div class="sline">{$nomeContratante}</div><div class="stitle">Contratante</div></td>
-      <td><div class="sline">&nbsp;</div><div class="stitle">Contratante</div><div class="ssub">C&ocirc;njuge</div></td>
-      <td><div class="sline">&nbsp;</div><div class="stitle">{$appName}</div><div class="ssub">Contratada</div></td>
-      <td><div class="sline">{$nomeCorretor}</div><div class="stitle">Corretor(a)</div><div class="ssub">Credenciado</div></td>
-    </tr>
-  </table>
-
-  <!-- ═════ TESTEMUNHAS ═════ -->
+  <div class="sig-section">
+    <table class="sig-table">
+      <tr>
+        <td><div class="sline">{$nomeContratante}</div><div class="stitle">Contratante</div></td>
+        <td><div class="sline">&nbsp;</div><div class="stitle">Contratante</div><div class="ssub">C&ocirc;njuge</div></td>
+        <td><div class="sline">&nbsp;</div><div class="stitle">{$appName}</div><div class="ssub">Contratada</div></td>
+        <td><div class="sline">{$nomeCorretor}</div><div class="stitle">Corretor(a)</div><div class="ssub">Credenciado</div></td>
+      </tr>
+    </table>
+  </div>
   <p class="test-label">Testemunhas:</p>
   <table class="test-table">
     <tr>
@@ -576,18 +535,15 @@ function buildAuthorizationHTML(array $form, array $submission, array $data, arr
     </tr>
   </table>
 
-  <!-- ═════ DOCUMENTOS ═════ -->
   {$docsHtml}
 
-</div><!-- /content -->
+</div>
 
-<!-- ═══ FOOTER ═══ -->
-<div class="footer">
-  <strong>{$appName}</strong> &nbsp;|&nbsp;
-  Av. Hermes Fontes, n&ordm; 1524, Bairro Luzia &ndash; CEP 49.048-010 &ndash; Aracaju/SE &nbsp;|&nbsp;
-  (79) 3304-0000 / 99691-0000 &nbsp;|&nbsp;
-  contato@a4imobiliaria.com.br &nbsp;|&nbsp;
-  Gerado em: {$submDate}
+<div class="page-footer">
+  <table><tr>
+    <td><span class="pf-brand">{$appName}</span><span class="pf-sep">|</span>Av. Hermes Fontes, n&ordm; 1524, Luzia &mdash; Aracaju/SE<span class="pf-sep">|</span>(79) 3304-0000 / 99691-0000</td>
+    <td class="pf-right">Protocolo: <strong>AVE-{$submId}</strong><span class="pf-sep">|</span>{$submDate}</td>
+  </tr></table>
 </div>
 
 </body>
