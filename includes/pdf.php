@@ -1598,14 +1598,14 @@ function buildDocsSection(array $labels, array $data): string
         $fileUrl  = e(APP_URL . '/uploads/' . ltrim($filePath, '/'));
         $rows .= "<tr>"
             . "<td class='docs-td-lbl'><span class='docs-lbl'>{$label}</span></td>"
-            . "<td><span class='docs-file'>&#128206; <a href='{$fileUrl}'>{$fileName}</a></span></td>"
+            . "<td class='docs-td-val'><span class='docs-file'>&#128206; <a href='{$fileUrl}'>{$fileName}</a></span></td>"
             . "</tr>";
     }
 
     if ($rows === '') return '';
 
-    return "<div class='section' style='margin-top:9px;'>"
-        . "<div class='sec-head'>Documentos Anexados</div>"
+    return "<div class='card' style='margin-top:12px;'>"
+        . "<div class='card-head'><span class='ch-title'>&#128206; &nbsp;Documentos Anexados</span></div>"
         . "<table class='docs-table'>{$rows}</table>"
         . "</div>";
 }
