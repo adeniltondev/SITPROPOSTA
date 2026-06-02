@@ -1337,54 +1337,80 @@ function buildPropostaFiadorHTML(array $form, array $submission, array $data, ar
 <head><meta charset="UTF-8"><style>{$css}</style></head>
 <body>
 
-<div class="header-ribbon">
-  <table><tr>
-    <td>Formul&aacute;rio Oficial</td>
-    <td class="hr-center">Preenchimento Online</td>
-    <td class="hr-right"><strong>{$appName}</strong></td>
-  </tr></table>
+<!-- ═══════ HEADER PREMIUM ═══════ -->
+<div class="ph-wrap">
+  <div class="ph-inner">
+    <table><tr>
+      <td class="ph-logo-cell"><div class="logo-frame">{$logoCell}</div></td>
+      <td class="ph-title-cell">
+        <div class="ph-badge">Formul&aacute;rio Oficial</div>
+        <div class="ph-h1">Proposta para Fian&ccedil;a</div>
+        <span class="ph-sub">de Loca&ccedil;&atilde;o</span>
+        <span class="ph-desc">Dados do(s) fiador(es) para proposta de loca&ccedil;&atilde;o &mdash; {$appName}</span>
+      </td>
+      <td class="ph-meta-cell">
+        <div class="ph-protocol">N&ordm; PF-{$submId}</div>
+        <div class="ph-date">Emitido em {$submDate}</div>
+        <div class="ph-status">Em An&aacute;lise</div>
+      </td>
+    </tr></table>
+  </div>
 </div>
+<div class="ph-accent"></div>
 
-<div class="header-main">
+<!-- ═══════ INFO STRIP ═══════ -->
+<div class="info-strip">
   <table><tr>
-    <td class="hm-logo"><div class="logo-box-wrap">{$logoCell}</div></td>
-    <td class="hm-title">
-      <div class="hm-kicker">Formul&aacute;rio Oficial</div>
-      <div class="hm-h1">Proposta para Fian&ccedil;a</div>
-      <span class="hm-sub">de Loca&ccedil;&atilde;o</span>
-      <div class="hm-desc">Preencha os dados do(s) fiador(es) para a proposta de loca&ccedil;&atilde;o</div>
+    <td>
+      <span class="is-lbl">Im&oacute;vel</span>
+      <span class="is-val">{$imovelSituado}</span>
+    </td>
+    <td>
+      <span class="is-lbl">C&oacute;digo</span>
+      <span class="is-val">{$codigo}</span>
+    </td>
+    <td>
+      <span class="is-lbl">Destina&ccedil;&atilde;o</span>
+      <span class="is-val">{$destinacao}</span>
+    </td>
+    <td class="text-right">
+      <span class="is-lbl">Valor Mensal</span>
+      <span class="is-val" style="color:#166534;">R$ {$valorMensal}</span>
     </td>
   </tr></table>
 </div>
 
-<div class="meta-strip">
-  <table><tr>
-    <td><span class="badge-num">N&ordm; PF-{$submId}</span> &nbsp;&nbsp; &#128197;&nbsp;{$submDate}</td>
-  </tr></table>
-</div>
+<!-- ═══════ BODY ═══════ -->
+<div class="page-body">
 
-<div class="content">
-
-  <div class="section">
-    <div class="sec-head">Im&oacute;vel</div>
+  <!-- IMÓVEL -->
+  <div class="card">
+    <div class="card-head"><span class="ch-title">&#127968; &nbsp;Im&oacute;vel</span></div>
     <table class="ft">
       <tr>
-        <td colspan="3"><span class="fl">Im&oacute;vel situado</span><span class="fv">{$imovelSituado}</span></td>
+        <td colspan="4"><span class="fl">Endere&ccedil;o do Im&oacute;vel</span><span class="fv">{$imovelSituado}</span></td>
       </tr>
       <tr class="alt">
         <td><span class="fl">C&oacute;digo n&ordm;</span><span class="fv">{$codigo}</span></td>
         <td><span class="fl">Bairro</span><span class="fv">{$bairroImovel}</span></td>
-        <td><span class="fl">Valor Mensal R$</span><span class="fv" style="font-weight:bold;color:#1a6e8e;">{$valorMensal}</span></td>
+        <td><span class="fl">Valor Mensal R$</span><span class="fv-money">R$ {$valorMensal}</span></td>
+        <td><span class="fl">Destina&ccedil;&atilde;o</span><span class="fv">{$destinacao}</span></td>
       </tr>
       <tr>
-        <td><span class="fl">Renda Familiar R$</span><span class="fv">{$rendaFamiliar}</span></td>
-        <td colspan="2"><span class="fl">Destina&ccedil;&atilde;o</span><span class="fv">{$destinacao}</span></td>
+        <td colspan="2"><span class="fl">Renda Familiar R$</span><span class="fv-money">R$ {$rendaFamiliar}</span></td>
+        <td colspan="2"></td>
       </tr>
     </table>
   </div>
 
-  <div class="section">
-    <div class="sec-head">Dados do Primeiro Proponente</div>
+  <!-- 1º PROPONENTE -->
+  <div class="card">
+    <div class="card-head">
+      <table style="width:100%;border-collapse:collapse;"><tr>
+        <td><span class="ch-title">&#128100; &nbsp;1&ordm; Proponente (Fiador Principal)</span></td>
+        <td style="text-align:right;"><span style="background:#27ae60;color:#fff;font-size:6.5px;font-weight:bold;padding:2px 8px;border-radius:8px;">PRINCIPAL</span></td>
+      </tr></table>
+    </div>
     <table class="ft">
       <tr>
         <td colspan="4"><span class="fl">Nome / Raz&atilde;o Social</span><span class="fv">{$p1Nome}</span></td>
@@ -1393,19 +1419,19 @@ function buildPropostaFiadorHTML(array $form, array $submission, array $data, ar
         <td><span class="fl">RG</span><span class="fv">{$p1Rg}</span></td>
         <td><span class="fl">&Oacute;rg&atilde;o Emissor</span><span class="fv">{$p1Orgao}</span></td>
         <td><span class="fl">Nascimento</span><span class="fv">{$p1Nasc}</span></td>
-        <td><span class="fl">CPF/CNPJ</span><span class="fv">{$p1Cpf}</span></td>
+        <td><span class="fl">CPF / CNPJ</span><span class="fv">{$p1Cpf}</span></td>
       </tr>
       <tr>
-        <td colspan="2"><span class="fl">Profiss&atilde;o/Atividade</span><span class="fv">{$p1Profissao}</span></td>
-        <td colspan="2"><span class="fl">Empresa onde trabalha</span><span class="fv">{$p1Empresa}</span></td>
+        <td colspan="2"><span class="fl">Profiss&atilde;o / Atividade</span><span class="fv">{$p1Profissao}</span></td>
+        <td colspan="2"><span class="fl">Empresa onde Trabalha</span><span class="fv">{$p1Empresa}</span></td>
       </tr>
       <tr class="alt">
         <td colspan="4"><span class="fl">Estado Civil</span><span class="fv">{$p1Estado}</span></td>
       </tr>
       <tr>
         <td colspan="2"><span class="fl">C&ocirc;njuge</span><span class="fv">{$p1Conjuge}</span></td>
-        <td><span class="fl">Nascimento</span><span class="fv">{$p1CnjNasc}</span></td>
-        <td><span class="fl">CPF</span><span class="fv">{$p1CnjCpf}</span></td>
+        <td><span class="fl">Nasc. C&ocirc;njuge</span><span class="fv">{$p1CnjNasc}</span></td>
+        <td><span class="fl">CPF C&ocirc;njuge</span><span class="fv">{$p1CnjCpf}</span></td>
       </tr>
       <tr class="alt">
         <td><span class="fl">RG C&ocirc;njuge</span><span class="fv">{$p1CnjRg}</span></td>
@@ -1432,10 +1458,24 @@ function buildPropostaFiadorHTML(array $form, array $submission, array $data, ar
         <td colspan="2"><span class="fl">E-mail 2</span><span class="fv">{$p1Email2}</span></td>
       </tr>
     </table>
+    <div style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:5px 14px;">
+      <table class="ft" style="border:none;">
+        <tr>
+          <td style="border:none;padding:4px 0;"><span class="fl">Informa&ccedil;&otilde;es Complementares &mdash; Nome</span><span class="fv">{$info1Nome}</span></td>
+          <td style="border:none;padding:4px 0;"><span class="fl">Contatos</span><span class="fv">{$info1Contatos}</span></td>
+        </tr>
+      </table>
+    </div>
   </div>
 
-  <div class="section">
-    <div class="sec-head">Dados do Segundo Proponente</div>
+  <!-- 2º PROPONENTE -->
+  <div class="card">
+    <div class="card-head">
+      <table style="width:100%;border-collapse:collapse;"><tr>
+        <td><span class="ch-title">&#128101; &nbsp;2&ordm; Proponente (Fiador Secund&aacute;rio)</span></td>
+        <td style="text-align:right;"><span style="background:#1e40af;color:#fff;font-size:6.5px;font-weight:bold;padding:2px 8px;border-radius:8px;">SECUND&Aacute;RIO</span></td>
+      </tr></table>
+    </div>
     <table class="ft">
       <tr>
         <td colspan="4"><span class="fl">Nome / Raz&atilde;o Social</span><span class="fv">{$p2Nome}</span></td>
@@ -1444,19 +1484,19 @@ function buildPropostaFiadorHTML(array $form, array $submission, array $data, ar
         <td><span class="fl">RG</span><span class="fv">{$p2Rg}</span></td>
         <td><span class="fl">&Oacute;rg&atilde;o Emissor</span><span class="fv">{$p2Orgao}</span></td>
         <td><span class="fl">Nascimento</span><span class="fv">{$p2Nasc}</span></td>
-        <td><span class="fl">CPF/CNPJ</span><span class="fv">{$p2Cpf}</span></td>
+        <td><span class="fl">CPF / CNPJ</span><span class="fv">{$p2Cpf}</span></td>
       </tr>
       <tr>
-        <td colspan="2"><span class="fl">Profiss&atilde;o/Atividade</span><span class="fv">{$p2Profissao}</span></td>
-        <td colspan="2"><span class="fl">Empresa onde trabalha</span><span class="fv">{$p2Empresa}</span></td>
+        <td colspan="2"><span class="fl">Profiss&atilde;o / Atividade</span><span class="fv">{$p2Profissao}</span></td>
+        <td colspan="2"><span class="fl">Empresa onde Trabalha</span><span class="fv">{$p2Empresa}</span></td>
       </tr>
       <tr class="alt">
         <td colspan="4"><span class="fl">Estado Civil</span><span class="fv">{$p2Estado}</span></td>
       </tr>
       <tr>
         <td colspan="2"><span class="fl">C&ocirc;njuge</span><span class="fv">{$p2Conjuge}</span></td>
-        <td><span class="fl">Nascimento</span><span class="fv">{$p2CnjNasc}</span></td>
-        <td><span class="fl">CPF</span><span class="fv">{$p2CnjCpf}</span></td>
+        <td><span class="fl">Nasc. C&ocirc;njuge</span><span class="fv">{$p2CnjNasc}</span></td>
+        <td><span class="fl">CPF C&ocirc;njuge</span><span class="fv">{$p2CnjCpf}</span></td>
       </tr>
       <tr class="alt">
         <td><span class="fl">RG C&ocirc;njuge</span><span class="fv">{$p2CnjRg}</span></td>
@@ -1483,41 +1523,41 @@ function buildPropostaFiadorHTML(array $form, array $submission, array $data, ar
         <td colspan="2"><span class="fl">E-mail 2</span><span class="fv">{$p2Email2}</span></td>
       </tr>
     </table>
+    <div style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:5px 14px;">
+      <table class="ft" style="border:none;">
+        <tr>
+          <td style="border:none;padding:4px 0;"><span class="fl">Informa&ccedil;&otilde;es Complementares &mdash; Nome</span><span class="fv">{$info2Nome}</span></td>
+          <td style="border:none;padding:4px 0;"><span class="fl">Contatos</span><span class="fv">{$info2Contatos}</span></td>
+        </tr>
+      </table>
+    </div>
   </div>
 
-  <div class="section">
-    <div class="sec-head">Informa&ccedil;&otilde;es Complementares — 1&ordm; Proponente</div>
-    <table class="ft">
-      <tr>
-        <td colspan="2"><span class="fl">Nome</span><span class="fv">{$info1Nome}</span></td>
-        <td colspan="2"><span class="fl">Contatos</span><span class="fv">{$info1Contatos}</span></td>
-      </tr>
-    </table>
-  </div>
-
-  <div class="section">
-    <div class="sec-head">Informa&ccedil;&otilde;es Complementares — 2&ordm; Proponente</div>
-    <table class="ft">
-      <tr>
-        <td colspan="2"><span class="fl">Nome</span><span class="fv">{$info2Nome}</span></td>
-        <td colspan="2"><span class="fl">Contatos</span><span class="fv">{$info2Contatos}</span></td>
-      </tr>
-    </table>
-  </div>
-
+  <!-- NOTA LEGAL -->
   <div class="legal">
-    A presente proposta &eacute; apenas de interesse de participa&ccedil;&atilde;o na loca&ccedil;&atilde;o como fiador, n&atilde;o tendo valor contratual. Com seja aprovada, os dados nela contidos ser&atilde;o utilizados para confec&ccedil;&atilde;o do contrato de loca&ccedil;&atilde;o, onde estar&atilde;o estabelecidas as cl&aacute;usulas contratuais.
+    <strong>AVISO LEGAL:</strong> A presente proposta &eacute; apenas de interesse de participa&ccedil;&atilde;o na loca&ccedil;&atilde;o como fiador, n&atilde;o tendo valor contratual. Com seja aprovada, os dados nela contidos ser&atilde;o utilizados para confec&ccedil;&atilde;o do contrato de loca&ccedil;&atilde;o, onde estar&atilde;o estabelecidas as cl&aacute;usulas contratuais.
   </div>
 
   {$docsHtml}
 
-</div>
+</div><!-- /page-body -->
 
-<div class="footer">
-  <strong>{$appName}</strong> &nbsp;|&nbsp;
-  Av. Hermes Fontes, n&ordm; 1524, Bairro Luzia &ndash; CEP 49.048-010 &ndash; Aracaju/SE &nbsp;|&nbsp;
-  (79) 3304-0000 / 99691-0000 &nbsp;|&nbsp; contato@a4imobiliaria.com.br &nbsp;|&nbsp;
-  Gerado em: {$submDate}
+<!-- ═══════ RODAPÉ ═══════ -->
+<div class="page-footer">
+  <table><tr>
+    <td>
+      <span class="pf-brand">{$appName}</span>
+      <span class="pf-sep">|</span>
+      Av. Hermes Fontes, n&ordm; 1524, Luzia &mdash; Aracaju/SE
+      <span class="pf-sep">|</span>
+      (79) 3304-0000 / 99691-0000
+    </td>
+    <td class="pf-right">
+      Protocolo: <strong>PF-{$submId}</strong>
+      <span class="pf-sep">|</span>
+      {$submDate}
+    </td>
+  </tr></table>
 </div>
 
 </body>
