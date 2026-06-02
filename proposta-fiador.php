@@ -526,10 +526,11 @@ function fRadio(string $n, string $v): string {
         .upload-btn-label {
             display: inline-block;
             background: var(--primary);
-            color: #fff;
+            color: #fff !important;
             padding: 9px 22px;
             font-size: 13px;
             font-weight: 600;
+            text-transform: none !important;
             border-radius: 5px;
             cursor: pointer;
             margin-bottom: 8px;
