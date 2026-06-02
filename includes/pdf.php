@@ -1038,73 +1038,89 @@ function buildPropostaLocacaoHTML(array $form, array $submission, array $data, a
 <head><meta charset="UTF-8"><style>{$css}</style></head>
 <body>
 
-<div class="header-ribbon">
-  <table><tr>
-    <td>Formul&aacute;rio Oficial</td>
-    <td class="hr-center">Preenchimento Online</td>
-    <td class="hr-right"><strong>{$appName}</strong></td>
-  </tr></table>
+<!-- ═══════ HEADER PREMIUM ═══════ -->
+<div class="ph-wrap">
+  <div class="ph-inner">
+    <table><tr>
+      <td class="ph-logo-cell"><div class="logo-frame">{$logoCell}</div></td>
+      <td class="ph-title-cell">
+        <div class="ph-badge">Formul&aacute;rio Oficial</div>
+        <div class="ph-h1">Proposta de Loca&ccedil;&atilde;o</div>
+        <span class="ph-desc">Solicita&ccedil;&atilde;o de loca&ccedil;&atilde;o de im&oacute;vel &mdash; {$appName}</span>
+      </td>
+      <td class="ph-meta-cell">
+        <div class="ph-protocol">N&ordm; PL-{$submId}</div>
+        <div class="ph-date">Emitido em {$submDate}</div>
+        <div class="ph-status">Em An&aacute;lise</div>
+      </td>
+    </tr></table>
+  </div>
 </div>
+<div class="ph-accent"></div>
 
-<div class="header-main">
+<!-- ═══════ INFO STRIP ═══════ -->
+<div class="info-strip">
   <table><tr>
-    <td class="hm-logo"><div class="logo-box-wrap">{$logoCell}</div></td>
-    <td class="hm-title">
-      <div class="hm-kicker">Formul&aacute;rio Oficial</div>
-      <div class="hm-h1">Proposta de Loca&ccedil;&atilde;o</div>
-      <div class="hm-desc">Preencha os dados abaixo para solicitar a loca&ccedil;&atilde;o do im&oacute;vel</div>
-      <div class="hm-meta">** indica campos obrigat&oacute;rios</div>
+    <td>
+      <span class="is-lbl">Destina&ccedil;&atilde;o</span>
+      <span class="is-val">{$destinacao}</span>
+    </td>
+    <td>
+      <span class="is-lbl">Tipo de Fian&ccedil;a</span>
+      <span class="is-val">{$tipoFianca}</span>
+    </td>
+    <td>
+      <span class="is-lbl">Prazo Contratado</span>
+      <span class="is-val">{$prazoMeses} meses</span>
+    </td>
+    <td class="text-right">
+      <span class="is-lbl">Valor Pretendido</span>
+      <span class="is-val" style="color:#166534;">R$ {$valorRs}</span>
     </td>
   </tr></table>
 </div>
 
-<div class="meta-strip">
-  <table><tr>
-    <td><span class="badge-num">N&ordm; PL-{$submId}</span> &nbsp;&nbsp; &#128197;&nbsp;{$submDate}</td>
-  </tr></table>
-</div>
+<!-- ═══════ BODY ═══════ -->
+<div class="page-body">
 
-<div class="content">
-
-  <div class="section">
-    <div class="sec-head">Im&oacute;vel Desejado</div>
+  <!-- IMÓVEL DESEJADO -->
+  <div class="card">
+    <div class="card-head"><span class="ch-title">&#127968; &nbsp;Im&oacute;vel Desejado</span></div>
     <table class="ft">
       <tr>
-        <td><span class="fl">C&oacute;digo n&ordm;</span><span class="fv">{$codigoImovel}</span></td>
-        <td><span class="fl">Prazo (Meses)</span><span class="fv">{$prazoMeses}</span></td>
-        <td><span class="fl">Valor R$</span><span class="fv" style="font-weight:bold;color:#1a6e8e;">{$valorRs}</span></td>
-      </tr>
-      <tr class="alt">
+        <td style="width:20%"><span class="fl">C&oacute;digo n&ordm;</span><span class="fv">{$codigoImovel}</span></td>
+        <td style="width:20%"><span class="fl">Prazo</span><span class="fv">{$prazoMeses} meses</span></td>
+        <td style="width:25%"><span class="fl">Valor Mensal R$</span><span class="fv-money">R$ {$valorRs}</span></td>
+        <td style="width:20%"><span class="fl">Vencimento</span><span class="fv">Dia {$dataVencimento}</span></td>
         <td><span class="fl">Destina&ccedil;&atilde;o</span><span class="fv">{$destinacao}</span></td>
-        <td><span class="fl">Melhor data de vencimento</span><span class="fv">Dia {$dataVencimento}</span></td>
-        <td><span class="fl">Tipo de fian&ccedil;a oferecida</span><span class="fv">{$tipoFianca}</span></td>
       </tr>
     </table>
   </div>
 
-  <div class="section">
-    <div class="sec-head">Pretendente a Locat&aacute;rio</div>
+  <!-- PRETENDENTE A LOCATÁRIO -->
+  <div class="card">
+    <div class="card-head"><span class="ch-title">&#128100; &nbsp;Pretendente a Locat&aacute;rio</span></div>
     <table class="ft">
       <tr>
-        <td colspan="3"><span class="fl">Nome</span><span class="fv">{$nome}</span></td>
-        <td><span class="fl">Nascimento</span><span class="fv">{$nascimento}</span></td>
+        <td colspan="3"><span class="fl">Nome Completo</span><span class="fv">{$nome}</span></td>
+        <td><span class="fl">Data de Nascimento</span><span class="fv">{$nascimento}</span></td>
       </tr>
       <tr class="alt">
         <td><span class="fl">RG</span><span class="fv">{$rg}</span></td>
-        <td><span class="fl">Exp.</span><span class="fv">{$exp}</span></td>
+        <td><span class="fl">Expedidor</span><span class="fv">{$exp}</span></td>
         <td><span class="fl">CPF</span><span class="fv">{$cpf}</span></td>
         <td><span class="fl">Nacionalidade</span><span class="fv">{$nacionalidade}</span></td>
       </tr>
       <tr>
-        <td colspan="2"><span class="fl">Estado Civil</span><span class="fv">{$estadoCivil}</span></td>
-        <td colspan="2"><span class="fl">C&ocirc;njuge</span><span class="fv">{$conjuge}</span></td>
+        <td><span class="fl">Estado Civil</span><span class="fv">{$estadoCivil}</span></td>
+        <td colspan="3"><span class="fl">C&ocirc;njuge</span><span class="fv">{$conjuge}</span></td>
       </tr>
       <tr class="alt">
         <td colspan="4"><span class="fl">Endere&ccedil;o Residencial Atual</span><span class="fv">{$endRes}</span></td>
       </tr>
       <tr>
         <td colspan="2"><span class="fl">Bairro</span><span class="fv">{$bairro}</span></td>
-        <td><span class="fl">Cidade/UF</span><span class="fv">{$cidadeUf}</span></td>
+        <td><span class="fl">Cidade / UF</span><span class="fv">{$cidadeUf}</span></td>
         <td><span class="fl">CEP</span><span class="fv">{$cep}</span></td>
       </tr>
       <tr class="alt">
@@ -1114,76 +1130,99 @@ function buildPropostaLocacaoHTML(array $form, array $submission, array $data, a
         <td><span class="fl">E-mail</span><span class="fv">{$email}</span></td>
       </tr>
       <tr>
-        <td colspan="2"><span class="fl">Tipo de Resid&ecirc;ncia</span><span class="fv">{$tipoResidencia}</span></td>
-        <td><span class="fl">Valor do Aluguel R$</span><span class="fv">{$valorAluguel}</span></td>
-        <td><span class="fl">Tempo que Reside (anos)</span><span class="fv">{$tempoReside}</span></td>
+        <td><span class="fl">Tipo de Resid&ecirc;ncia</span><span class="fv">{$tipoResidencia}</span></td>
+        <td><span class="fl">Aluguel Atual R$</span><span class="fv">{$valorAluguel}</span></td>
+        <td><span class="fl">Tempo que Reside</span><span class="fv">{$tempoReside} ano(s)</span></td>
+        <td><span class="fl">N&ordm; Dependentes</span><span class="fv">{$numDep}</span></td>
       </tr>
       <tr class="alt">
-        <td><span class="fl">N&ordm; de Dependentes</span><span class="fv">{$numDep}</span></td>
-        <td colspan="3"><span class="fl">Cria Animal</span><span class="fv">{$criaAnimal}</span></td>
+        <td colspan="4"><span class="fl">Cria Animal Dom&eacute;stico?</span><span class="fv">{$criaAnimal}</span></td>
       </tr>
     </table>
   </div>
 
-  <div class="section">
-    <div class="sec-head">Informa&ccedil;&otilde;es Profissionais</div>
+  <!-- INFORMAÇÕES PROFISSIONAIS -->
+  <div class="card">
+    <div class="card-head"><span class="ch-title">&#128188; &nbsp;Informa&ccedil;&otilde;es Profissionais</span></div>
     <table class="ft">
       <tr>
-        <td colspan="2"><span class="fl">Empresa onde trabalha</span><span class="fv">{$empresa}</span></td>
-        <td colspan="2"><span class="fl">Cargo/Fun&ccedil;&atilde;o</span><span class="fv">{$cargo}</span></td>
+        <td colspan="2"><span class="fl">Empresa onde Trabalha</span><span class="fv">{$empresa}</span></td>
+        <td colspan="2"><span class="fl">Cargo / Fun&ccedil;&atilde;o</span><span class="fv">{$cargo}</span></td>
       </tr>
       <tr class="alt">
         <td colspan="4"><span class="fl">Endere&ccedil;o Comercial</span><span class="fv">{$endCom}</span></td>
       </tr>
       <tr>
-        <td colspan="2"><span class="fl">Bairro</span><span class="fv">{$bairroCom}</span></td>
-        <td><span class="fl">Cidade/UF</span><span class="fv">{$cidadeUfCom}</span></td>
+        <td colspan="2"><span class="fl">Bairro Comercial</span><span class="fv">{$bairroCom}</span></td>
+        <td><span class="fl">Cidade / UF</span><span class="fv">{$cidadeUfCom}</span></td>
         <td><span class="fl">CEP</span><span class="fv">{$cepCom}</span></td>
       </tr>
       <tr class="alt">
-        <td><span class="fl">Telefone Fixo</span><span class="fv">{$telFixoCom}</span></td>
-        <td><span class="fl">Celular</span><span class="fv">{$celularCom}</span></td>
-        <td colspan="2"><span class="fl">E-mail</span><span class="fv">{$emailCom}</span></td>
+        <td><span class="fl">Tel. Fixo Comercial</span><span class="fv">{$telFixoCom}</span></td>
+        <td><span class="fl">Celular Comercial</span><span class="fv">{$celularCom}</span></td>
+        <td colspan="2"><span class="fl">E-mail Comercial</span><span class="fv">{$emailCom}</span></td>
       </tr>
       <tr>
-        <td colspan="2"><span class="fl">Tempo que trabalha</span><span class="fv">{$tempoTrabalha}</span></td>
-        <td colspan="2"><span class="fl">Renda Mensal R$</span><span class="fv" style="font-weight:bold;color:#1a6e8e;">{$rendaMensal}</span></td>
+        <td colspan="2"><span class="fl">Tempo de Empresa</span><span class="fv">{$tempoTrabalha}</span></td>
+        <td colspan="2">
+          <span class="fl">Renda Mensal</span>
+          <span class="fv-money">R$ {$rendaMensal}</span>
+        </td>
       </tr>
     </table>
   </div>
 
-  <div class="section">
-    <div class="sec-head">Refer&ecirc;ncias Pessoais</div>
+  <!-- REFERÊNCIAS PESSOAIS -->
+  <div class="card">
+    <div class="card-head"><span class="ch-title">&#128101; &nbsp;Refer&ecirc;ncias Pessoais</span></div>
     <table class="ft">
       <tr>
+        <td style="width:8%;background:#f8fafc;padding:6px 10px;text-align:center;vertical-align:middle;">
+          <span style="color:#94a3b8;font-size:7px;font-weight:bold;">01</span>
+        </td>
         <td colspan="2"><span class="fl">Nome</span><span class="fv">{$ref1Nome}</span></td>
         <td><span class="fl">Rela&ccedil;&atilde;o</span><span class="fv">{$ref1Relacao}</span></td>
         <td><span class="fl">Telefone</span><span class="fv">{$ref1Tel}</span></td>
       </tr>
       <tr class="alt">
+        <td style="width:8%;background:#f0f7ff;padding:6px 10px;text-align:center;vertical-align:middle;">
+          <span style="color:#94a3b8;font-size:7px;font-weight:bold;">02</span>
+        </td>
         <td colspan="2"><span class="fl">Nome</span><span class="fv">{$ref2Nome}</span></td>
         <td><span class="fl">Rela&ccedil;&atilde;o</span><span class="fv">{$ref2Relacao}</span></td>
         <td><span class="fl">Telefone</span><span class="fv">{$ref2Tel}</span></td>
       </tr>
       <tr>
-        <td colspan="4"><span class="fl">Observa&ccedil;&otilde;es</span><span class="fv" style="min-height:18px;">{$observacoes}</span></td>
+        <td colspan="5"><span class="fl">Observa&ccedil;&otilde;es Gerais</span><span class="fv" style="min-height:18px;">{$observacoes}</span></td>
       </tr>
     </table>
   </div>
 
+  <!-- NOTA LEGAL -->
   <div class="legal">
-    A presente proposta &eacute; apenas de interesse de participa&ccedil;&atilde;o na loca&ccedil;&atilde;o, n&atilde;o tendo valor contratual. Com seja aprovada, os dados nela contidos ser&atilde;o utilizados para confec&ccedil;&atilde;o do contrato de loca&ccedil;&atilde;o, onde estar&atilde;o estabelecidas as cl&aacute;usulas contratuais.
+    <strong>AVISO LEGAL:</strong> A presente proposta &eacute; apenas de interesse de participa&ccedil;&atilde;o na loca&ccedil;&atilde;o, n&atilde;o tendo valor contratual. Com seja aprovada, os dados nela contidos ser&atilde;o utilizados para confec&ccedil;&atilde;o do contrato de loca&ccedil;&atilde;o, onde estar&atilde;o estabelecidas as cl&aacute;usulas contratuais.
   </div>
 
   {$docsHtml}
 
-</div>
+</div><!-- /page-body -->
 
-<div class="footer">
-  <strong>{$appName}</strong> &nbsp;|&nbsp;
-  Av. Hermes Fontes, n&ordm; 1524, Bairro Luzia &ndash; CEP 49.048-010 &ndash; Aracaju/SE &nbsp;|&nbsp;
-  (79) 3304-0000 / 99691-0000 &nbsp;|&nbsp; contato@a4imobiliaria.com.br &nbsp;|&nbsp;
-  Gerado em: {$submDate}
+<!-- ═══════ RODAPÉ ═══════ -->
+<div class="page-footer">
+  <table><tr>
+    <td>
+      <span class="pf-brand">{$appName}</span>
+      <span class="pf-sep">|</span>
+      Av. Hermes Fontes, n&ordm; 1524, Luzia &mdash; Aracaju/SE
+      <span class="pf-sep">|</span>
+      (79) 3304-0000 / 99691-0000
+    </td>
+    <td class="pf-right">
+      Protocolo: <strong>PL-{$submId}</strong>
+      <span class="pf-sep">|</span>
+      {$submDate}
+    </td>
+  </tr></table>
 </div>
 
 </body>
