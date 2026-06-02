@@ -361,9 +361,9 @@ function fRadio(string $n, string $v): string {
                             <label>Código n° <span style="color:#c0392b">**</span></label>
                             <input type="text" name="codigo_imovel" value="<?= fv('codigo_imovel') ?>">
                         </div>
-                        <div class="fc fc-sm">
+                        <div class="fc fc-lg">
                             <label>Prazo a contratar <span style="color:#c0392b">**</span></label>
-                            <select name="prazo_meses" id="prazo_meses">
+                            <select name="prazo_meses" id="prazo_meses" style="width:100%;">
                                 <option value="36" <?= fv('prazo_meses','36') == '36' ? 'selected' : '' ?>>36 meses (Residencial)</option>
                                 <option value="60" <?= fv('prazo_meses','36') == '60' ? 'selected' : '' ?>>60 meses (Comercial)</option>
                             </select>
