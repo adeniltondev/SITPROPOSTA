@@ -633,6 +633,7 @@ function fRadio(string $n, string $v): string {
                         <p style="margin-bottom:10px;">Solte os arquivos aqui ou</p>
                         <label class="upload-btn-label" for="doc_anexo_id">Anexar arquivos</label>
                         <input id="doc_anexo_id" type="file" name="doc_anexo[]" accept=".jpg,.gif,.mp4,.pdf,.png,.doc,.docx,.xls,.xlsx" multiple style="display:none;">
+                        <div id="doc_anexo_preview" style="margin:6px 0;min-height:18px;"></div>
                         <p>Tipos de arquivo aceitos: jpg, gif, mp4, pdf, png. Máx. tamanho do arquivo: 10 MB.</p>
                     </div>
                 </div>
@@ -660,6 +661,20 @@ function fRadio(string $n, string $v): string {
 </div>
 
 <script>
+document.getElementById('doc_anexo_id').addEventListener('change', function() {
+    var preview = document.getElementById('doc_anexo_preview');
+    if (!this.files.length) { preview.innerHTML = ''; return; }
+    var html = '';
+    Array.from(this.files).forEach(function(f) {
+        html += '<div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:#1a2332;background:#e8f3f9;border:1px solid #c8dde8;border-radius:4px;padding:3px 8px;margin:2px 0;">'
+              + '<span style="color:#0f607e;font-size:13px;">&#128206;</span>'
+              + '<span>' + f.name + '</span>'
+              + '<span style="color:#94a3b8;margin-left:auto;">' + (f.size > 1048576 ? (f.size/1048576).toFixed(1)+' MB' : Math.round(f.size/1024)+' KB') + '</span>'
+              + '</div>';
+    });
+    preview.innerHTML = html;
+});
+
 document.querySelectorAll('[data-mask]').forEach(function(el) {
     el.addEventListener('input', function() {
         var v = el.value.replace(/\D/g, '');
