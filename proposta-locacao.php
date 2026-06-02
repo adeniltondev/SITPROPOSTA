@@ -24,7 +24,7 @@ $form = $db->fetchOne('SELECT * FROM forms WHERE slug = ? LIMIT 1', [$slug]);
 if (!$form) {
     $db->query(
         "INSERT INTO forms (title, slug, description, fields, pdf_template, is_active) VALUES (?, ?, ?, ?, ?, 1)",
-        ['Proposta de Locação', $slug, 'Proposta de locação de imóvel – A4 Imobiliária.', '[]', 'locacao']
+        ['Proposta de Locação', $slug, 'Proposta de locação de imóvel – A4 Imobiliária.', '[]', 'proposta-locacao']
     );
     $form = $db->fetchOne('SELECT * FROM forms WHERE slug = ? LIMIT 1', [$slug]);
 }
