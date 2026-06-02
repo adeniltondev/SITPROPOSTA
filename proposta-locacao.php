@@ -44,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$success) {
     } else {
         $textFields = [
             'codigo_imovel','prazo_meses','valor_rs','destinacao','data_vencimento','tipo_fianca',
+            'conjuge_rg','conjuge_cpf',
             'nome','nascimento','rg','exp','cpf','nacionalidade','estado_civil',
             'endereco_residencial','bairro','cidade_uf','cep',
             'whatsapp','residencial_fixo','celular','email_contato',
@@ -373,12 +374,10 @@ function fRadio(string $n, string $v): string {
                         </div>
                     </div>
                 </div>
-                <div class="obs-note">Obs: a opção de 60 meses, só está disponível para destinação comercial.</div>
-
                 <div class="check-row" style="border-top:1px solid var(--border);margin-top:2px;">
                     <span class="row-label">Destinação <span style="color:#c0392b">**</span></span>
                     <?php foreach (['Residencial','Comercial','Misto'] as $d): ?>
-                        <label><input type="radio" name="destinacao" value="<?= $d ?>" <?= fRadio('destinacao',$d) ?>><?= $d ?></label>
+                        <label><input type="radio" name="destinacao" value="<?= $d ?>" <?= fRadio('destinacao',$d) ?> onchange="atualizarPrazo(this.value)"><?= $d ?></label>
                     <?php endforeach; ?>
                 </div>
 
@@ -387,9 +386,9 @@ function fRadio(string $n, string $v): string {
                         <div class="fc fc-sm">
                             <label>Melhor data de vencimento <span style="color:#c0392b">**</span></label>
                             <select name="data_vencimento">
-                                <?php for ($d=1;$d<=30;$d++): ?>
-                                    <option value="<?= sprintf('%02d',$d) ?>" <?= fv('data_vencimento','01') == sprintf('%02d',$d) ? 'selected' : '' ?>><?= sprintf('%02d',$d) ?></option>
-                                <?php endfor; ?>
+                                <?php foreach (['01','10','15'] as $dv): ?>
+                                    <option value="<?= $dv ?>" <?= fv('data_vencimento','01') === $dv ? 'selected' : '' ?>>Dia <?= $dv ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
@@ -397,7 +396,7 @@ function fRadio(string $n, string $v): string {
 
                 <div class="check-row" style="border-top:1px solid var(--border);margin-top:2px;">
                     <span class="row-label">Tipo de fiança oferecida <span style="color:#c0392b">**</span></span>
-                    <?php foreach (['Fiador pedido','Credpago','Caução locatícia'] as $tf): ?>
+                    <?php foreach (['Fiador pedido','LOFT','Caução locatícia'] as $tf): ?>
                         <label><input type="radio" name="tipo_fianca" value="<?= $tf ?>" <?= fRadio('tipo_fianca',$tf) ?>><?= $tf ?></label>
                     <?php endforeach; ?>
                 </div>
@@ -490,6 +489,14 @@ function fRadio(string $n, string $v): string {
                         <div class="fc fc-full">
                             <label>Cônjuge</label>
                             <input type="text" name="conjuge" value="<?= fv('conjuge') ?>">
+                        </div>
+                        <div class="fc fc-md">
+                            <label>RG do Cônjuge</label>
+                            <input type="text" name="conjuge_rg" value="<?= fv('conjuge_rg') ?>">
+                        </div>
+                        <div class="fc fc-md">
+                            <label>CPF do Cônjuge</label>
+                            <input type="text" name="conjuge_cpf" value="<?= fv('conjuge_cpf') ?>" data-mask="cpf" placeholder="000.000.000-00">
                         </div>
                     </div>
                 </div>
