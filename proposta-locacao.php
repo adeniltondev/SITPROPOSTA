@@ -243,9 +243,10 @@ function fRadio(string $n, string $v): string {
         .doc-upload-item input[type=file] { font-size: 12px; width: 100%; color: #374151; }
         .doc-upload-item p { font-size: 10px; color: #94a3b8; margin-top: 4px; }
         .upload-btn-label {
-            display: inline-block; background: var(--primary); color: #fff;
+            display: inline-block; background: var(--primary); color: #fff !important;
             padding: 9px 22px; font-size: 13px; font-weight: 600; border-radius: 5px;
             cursor: pointer; margin-bottom: 8px; font-family: 'Inter', sans-serif;
+            text-transform: none !important;
         }
 
         /* ── Rodapé documento ── */
