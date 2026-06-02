@@ -906,6 +906,542 @@ HTML;
 }
 
 // ============================================================
+// TEMPLATE: PROPOSTA DE LOCAÇÃO
+// ============================================================
+
+function buildPropostaLocacaoHTML(array $form, array $submission, array $data, array $settings): string
+{
+    $appName  = e($settings['app_name'] ?? APP_NAME);
+    $logoPath = !empty($settings['logo_path']) ? LOGO_PATH . DIRECTORY_SEPARATOR . $settings['logo_path'] : '';
+    $submId   = (int) $submission['id'];
+    $submDate = formatDate($submission['created_at'] ?? date('Y-m-d H:i:s'));
+
+    $d = function (string $key, string $default = '') use ($data): string {
+        $v = trim($data[$key] ?? '');
+        return e($v !== '' ? $v : $default);
+    };
+
+    $codigoImovel     = $d('codigo_imovel');
+    $prazoMeses       = $d('prazo_meses');
+    $valorRs          = $d('valor_rs', '—');
+    $destinacao       = $d('destinacao');
+    $dataVencimento   = $d('data_vencimento');
+    $tipoFianca       = $d('tipo_fianca');
+
+    $nome             = $d('nome');
+    $nascimento       = $d('nascimento');
+    $rg               = $d('rg');
+    $exp              = $d('exp');
+    $cpf              = $d('cpf');
+    $nacionalidade    = $d('nacionalidade');
+    $estadoCivil      = $d('estado_civil');
+    $conjuge          = $d('conjuge');
+    $endRes           = $d('endereco_residencial');
+    $bairro           = $d('bairro');
+    $cidadeUf         = $d('cidade_uf');
+    $cep              = $d('cep');
+    $whatsapp         = $d('whatsapp');
+    $resFixo          = $d('residencial_fixo');
+    $celular          = $d('celular');
+    $email            = $d('email_contato');
+    $tipoResidencia   = $d('tipo_residencia');
+    $valorAluguel     = $d('valor_aluguel');
+    $tempoReside      = $d('tempo_reside_anos');
+    $numDep           = $d('num_dependentes');
+    $criaAnimal       = $d('cria_animal');
+    $empresa          = $d('empresa_trabalha');
+    $cargo            = $d('cargo_funcao');
+    $endCom           = $d('endereco_comercial');
+    $bairroCom        = $d('bairro_comercial');
+    $cidadeUfCom      = $d('cidade_uf_comercial');
+    $cepCom           = $d('cep_comercial');
+    $telFixoCom       = $d('telefone_fixo_comercial');
+    $celularCom       = $d('celular_comercial');
+    $emailCom         = $d('email_comercial');
+    $tempoTrabalha    = $d('tempo_trabalha');
+    $rendaMensal      = $d('renda_mensal', '—');
+    $ref1Nome         = $d('ref1_nome');
+    $ref1Relacao      = $d('ref1_relacao');
+    $ref1Tel          = $d('ref1_telefone');
+    $ref2Nome         = $d('ref2_nome');
+    $ref2Relacao      = $d('ref2_relacao');
+    $ref2Tel          = $d('ref2_telefone');
+    $observacoes      = $d('observacoes');
+
+    $docAnexo = trim($data['doc_anexo'] ?? '');
+    $docsHtml = '';
+    if ($docAnexo !== '') {
+        $files = array_filter(array_map('trim', explode(',', $docAnexo)));
+        $rows  = '';
+        foreach ($files as $f) {
+            $fname = e(basename($f));
+            $furl  = e(APP_URL . '/uploads/' . ltrim($f, '/'));
+            $rows .= "<tr><td class='docs-td-lbl'><span class='docs-lbl'>Documento Anexado</span></td>"
+                   . "<td><span class='docs-file'>&#128206; <a href='{$furl}'>{$fname}</a></span></td></tr>";
+        }
+        $docsHtml = "<div class='section' style='margin-top:9px;'>"
+                  . "<div class='sec-head'>Documentos Anexados</div>"
+                  . "<table class='docs-table'>{$rows}</table></div>";
+    }
+
+    $logoCell = buildLogoBannerCell($logoPath, $appName);
+    $css      = sharedPdfCss();
+
+    return <<<HTML
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><style>{$css}</style></head>
+<body>
+
+<div class="header-ribbon">
+  <table><tr>
+    <td>Formul&aacute;rio Oficial</td>
+    <td class="hr-center">Preenchimento Online</td>
+    <td class="hr-right"><strong>{$appName}</strong></td>
+  </tr></table>
+</div>
+
+<div class="header-main">
+  <table><tr>
+    <td class="hm-logo"><div class="logo-box-wrap">{$logoCell}</div></td>
+    <td class="hm-title">
+      <div class="hm-kicker">Formul&aacute;rio Oficial</div>
+      <div class="hm-h1">Proposta de Loca&ccedil;&atilde;o</div>
+      <div class="hm-desc">Preencha os dados abaixo para solicitar a loca&ccedil;&atilde;o do im&oacute;vel</div>
+      <div class="hm-meta">** indica campos obrigat&oacute;rios</div>
+    </td>
+  </tr></table>
+</div>
+
+<div class="meta-strip">
+  <table><tr>
+    <td><span class="badge-num">N&ordm; PL-{$submId}</span> &nbsp;&nbsp; &#128197;&nbsp;{$submDate}</td>
+  </tr></table>
+</div>
+
+<div class="content">
+
+  <div class="section">
+    <div class="sec-head">Im&oacute;vel Desejado</div>
+    <table class="ft">
+      <tr>
+        <td><span class="fl">C&oacute;digo n&ordm;</span><span class="fv">{$codigoImovel}</span></td>
+        <td><span class="fl">Prazo (Meses)</span><span class="fv">{$prazoMeses}</span></td>
+        <td><span class="fl">Valor R$</span><span class="fv" style="font-weight:bold;color:#1a6e8e;">{$valorRs}</span></td>
+      </tr>
+      <tr class="alt">
+        <td><span class="fl">Destina&ccedil;&atilde;o</span><span class="fv">{$destinacao}</span></td>
+        <td><span class="fl">Melhor data de vencimento</span><span class="fv">Dia {$dataVencimento}</span></td>
+        <td><span class="fl">Tipo de fian&ccedil;a oferecida</span><span class="fv">{$tipoFianca}</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="sec-head">Pretendente a Locat&aacute;rio</div>
+    <table class="ft">
+      <tr>
+        <td colspan="3"><span class="fl">Nome</span><span class="fv">{$nome}</span></td>
+        <td><span class="fl">Nascimento</span><span class="fv">{$nascimento}</span></td>
+      </tr>
+      <tr class="alt">
+        <td><span class="fl">RG</span><span class="fv">{$rg}</span></td>
+        <td><span class="fl">Exp.</span><span class="fv">{$exp}</span></td>
+        <td><span class="fl">CPF</span><span class="fv">{$cpf}</span></td>
+        <td><span class="fl">Nacionalidade</span><span class="fv">{$nacionalidade}</span></td>
+      </tr>
+      <tr>
+        <td colspan="2"><span class="fl">Estado Civil</span><span class="fv">{$estadoCivil}</span></td>
+        <td colspan="2"><span class="fl">C&ocirc;njuge</span><span class="fv">{$conjuge}</span></td>
+      </tr>
+      <tr class="alt">
+        <td colspan="4"><span class="fl">Endere&ccedil;o Residencial Atual</span><span class="fv">{$endRes}</span></td>
+      </tr>
+      <tr>
+        <td colspan="2"><span class="fl">Bairro</span><span class="fv">{$bairro}</span></td>
+        <td><span class="fl">Cidade/UF</span><span class="fv">{$cidadeUf}</span></td>
+        <td><span class="fl">CEP</span><span class="fv">{$cep}</span></td>
+      </tr>
+      <tr class="alt">
+        <td><span class="fl">WhatsApp</span><span class="fv">{$whatsapp}</span></td>
+        <td><span class="fl">Residencial Fixo</span><span class="fv">{$resFixo}</span></td>
+        <td><span class="fl">Celular</span><span class="fv">{$celular}</span></td>
+        <td><span class="fl">E-mail</span><span class="fv">{$email}</span></td>
+      </tr>
+      <tr>
+        <td colspan="2"><span class="fl">Tipo de Resid&ecirc;ncia</span><span class="fv">{$tipoResidencia}</span></td>
+        <td><span class="fl">Valor do Aluguel R$</span><span class="fv">{$valorAluguel}</span></td>
+        <td><span class="fl">Tempo que Reside (anos)</span><span class="fv">{$tempoReside}</span></td>
+      </tr>
+      <tr class="alt">
+        <td><span class="fl">N&ordm; de Dependentes</span><span class="fv">{$numDep}</span></td>
+        <td colspan="3"><span class="fl">Cria Animal</span><span class="fv">{$criaAnimal}</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="sec-head">Informa&ccedil;&otilde;es Profissionais</div>
+    <table class="ft">
+      <tr>
+        <td colspan="2"><span class="fl">Empresa onde trabalha</span><span class="fv">{$empresa}</span></td>
+        <td colspan="2"><span class="fl">Cargo/Fun&ccedil;&atilde;o</span><span class="fv">{$cargo}</span></td>
+      </tr>
+      <tr class="alt">
+        <td colspan="4"><span class="fl">Endere&ccedil;o Comercial</span><span class="fv">{$endCom}</span></td>
+      </tr>
+      <tr>
+        <td colspan="2"><span class="fl">Bairro</span><span class="fv">{$bairroCom}</span></td>
+        <td><span class="fl">Cidade/UF</span><span class="fv">{$cidadeUfCom}</span></td>
+        <td><span class="fl">CEP</span><span class="fv">{$cepCom}</span></td>
+      </tr>
+      <tr class="alt">
+        <td><span class="fl">Telefone Fixo</span><span class="fv">{$telFixoCom}</span></td>
+        <td><span class="fl">Celular</span><span class="fv">{$celularCom}</span></td>
+        <td colspan="2"><span class="fl">E-mail</span><span class="fv">{$emailCom}</span></td>
+      </tr>
+      <tr>
+        <td colspan="2"><span class="fl">Tempo que trabalha</span><span class="fv">{$tempoTrabalha}</span></td>
+        <td colspan="2"><span class="fl">Renda Mensal R$</span><span class="fv" style="font-weight:bold;color:#1a6e8e;">{$rendaMensal}</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="sec-head">Refer&ecirc;ncias Pessoais</div>
+    <table class="ft">
+      <tr>
+        <td colspan="2"><span class="fl">Nome</span><span class="fv">{$ref1Nome}</span></td>
+        <td><span class="fl">Rela&ccedil;&atilde;o</span><span class="fv">{$ref1Relacao}</span></td>
+        <td><span class="fl">Telefone</span><span class="fv">{$ref1Tel}</span></td>
+      </tr>
+      <tr class="alt">
+        <td colspan="2"><span class="fl">Nome</span><span class="fv">{$ref2Nome}</span></td>
+        <td><span class="fl">Rela&ccedil;&atilde;o</span><span class="fv">{$ref2Relacao}</span></td>
+        <td><span class="fl">Telefone</span><span class="fv">{$ref2Tel}</span></td>
+      </tr>
+      <tr>
+        <td colspan="4"><span class="fl">Observa&ccedil;&otilde;es</span><span class="fv" style="min-height:18px;">{$observacoes}</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="legal">
+    A presente proposta &eacute; apenas de interesse de participa&ccedil;&atilde;o na loca&ccedil;&atilde;o, n&atilde;o tendo valor contratual. Com seja aprovada, os dados nela contidos ser&atilde;o utilizados para confec&ccedil;&atilde;o do contrato de loca&ccedil;&atilde;o, onde estar&atilde;o estabelecidas as cl&aacute;usulas contratuais.
+  </div>
+
+  {$docsHtml}
+
+</div>
+
+<div class="footer">
+  <strong>{$appName}</strong> &nbsp;|&nbsp;
+  Av. Hermes Fontes, n&ordm; 1524, Bairro Luzia &ndash; CEP 49.048-010 &ndash; Aracaju/SE &nbsp;|&nbsp;
+  (79) 3304-0000 / 99691-0000 &nbsp;|&nbsp; contato@a4imobiliaria.com.br &nbsp;|&nbsp;
+  Gerado em: {$submDate}
+</div>
+
+</body>
+</html>
+HTML;
+}
+
+// ============================================================
+// TEMPLATE: PROPOSTA PARA FIANÇA DE LOCAÇÃO
+// ============================================================
+
+function buildPropostaFiadorHTML(array $form, array $submission, array $data, array $settings): string
+{
+    $appName  = e($settings['app_name'] ?? APP_NAME);
+    $logoPath = !empty($settings['logo_path']) ? LOGO_PATH . DIRECTORY_SEPARATOR . $settings['logo_path'] : '';
+    $submId   = (int) $submission['id'];
+    $submDate = formatDate($submission['created_at'] ?? date('Y-m-d H:i:s'));
+
+    $d = function (string $key, string $default = '') use ($data): string {
+        $v = trim($data[$key] ?? '');
+        return e($v !== '' ? $v : $default);
+    };
+
+    // Imóvel
+    $imovelSituado  = $d('imovel_situado');
+    $codigo         = $d('codigo');
+    $bairroImovel   = $d('bairro_imovel');
+    $valorMensal    = $d('valor_mensal', '—');
+    $rendaFamiliar  = $d('renda_familiar', '—');
+    $destinacao     = $d('destinacao');
+
+    // 1º Proponente
+    $p1Nome         = $d('p1_nome');
+    $p1Rg           = $d('p1_rg');
+    $p1Orgao        = $d('p1_orgao_emissor');
+    $p1Nasc         = $d('p1_nascimento');
+    $p1Cpf          = $d('p1_cpf_cnpj');
+    $p1Profissao    = $d('p1_profissao');
+    $p1Empresa      = $d('p1_empresa');
+    $p1Estado       = $d('p1_estado_civil');
+    $p1Conjuge      = $d('p1_conjuge');
+    $p1CnjNasc      = $d('p1_conjuge_nascimento');
+    $p1CnjRg        = $d('p1_conjuge_rg');
+    $p1CnjOrgao     = $d('p1_conjuge_orgao');
+    $p1CnjCpf       = $d('p1_conjuge_cpf');
+    $p1Endereco     = $d('p1_endereco');
+    $p1Compl        = $d('p1_complemento');
+    $p1Bairro       = $d('p1_bairro');
+    $p1Cidade       = $d('p1_cidade');
+    $p1Cep          = $d('p1_cep');
+    $p1Uf           = $d('p1_uf');
+    $p1Tel1         = $d('p1_telefone1');
+    $p1Tel2         = $d('p1_telefone2');
+    $p1Tel3         = $d('p1_telefone3');
+    $p1Email1       = $d('p1_email1');
+    $p1Email2       = $d('p1_email2');
+
+    // 2º Proponente
+    $p2Nome         = $d('p2_nome');
+    $p2Rg           = $d('p2_rg');
+    $p2Orgao        = $d('p2_orgao_emissor');
+    $p2Nasc         = $d('p2_nascimento');
+    $p2Cpf          = $d('p2_cpf_cnpj');
+    $p2Profissao    = $d('p2_profissao');
+    $p2Empresa      = $d('p2_empresa');
+    $p2Estado       = $d('p2_estado_civil');
+    $p2Conjuge      = $d('p2_conjuge');
+    $p2CnjNasc      = $d('p2_conjuge_nascimento');
+    $p2CnjRg        = $d('p2_conjuge_rg');
+    $p2CnjOrgao     = $d('p2_conjuge_orgao');
+    $p2CnjCpf       = $d('p2_conjuge_cpf');
+    $p2Endereco     = $d('p2_endereco');
+    $p2Compl        = $d('p2_complemento');
+    $p2Bairro       = $d('p2_bairro');
+    $p2Cidade       = $d('p2_cidade');
+    $p2Cep          = $d('p2_cep');
+    $p2Uf           = $d('p2_uf');
+    $p2Tel1         = $d('p2_telefone1');
+    $p2Tel2         = $d('p2_telefone2');
+    $p2Tel3         = $d('p2_telefone3');
+    $p2Email1       = $d('p2_email1');
+    $p2Email2       = $d('p2_email2');
+
+    // Informações complementares
+    $info1Nome      = $d('info1_nome');
+    $info1Contatos  = $d('info1_contatos');
+    $info2Nome      = $d('info2_nome');
+    $info2Contatos  = $d('info2_contatos');
+
+    $docAnexo = trim($data['doc_anexo'] ?? '');
+    $docsHtml = '';
+    if ($docAnexo !== '') {
+        $files = array_filter(array_map('trim', explode(',', $docAnexo)));
+        $rows  = '';
+        foreach ($files as $f) {
+            $fname = e(basename($f));
+            $furl  = e(APP_URL . '/uploads/' . ltrim($f, '/'));
+            $rows .= "<tr><td class='docs-td-lbl'><span class='docs-lbl'>Documento Anexado</span></td>"
+                   . "<td><span class='docs-file'>&#128206; <a href='{$furl}'>{$fname}</a></span></td></tr>";
+        }
+        $docsHtml = "<div class='section' style='margin-top:9px;'>"
+                  . "<div class='sec-head'>Documentos Anexados</div>"
+                  . "<table class='docs-table'>{$rows}</table></div>";
+    }
+
+    $logoCell = buildLogoBannerCell($logoPath, $appName);
+    $css      = sharedPdfCss();
+
+    return <<<HTML
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><style>{$css}</style></head>
+<body>
+
+<div class="header-ribbon">
+  <table><tr>
+    <td>Formul&aacute;rio Oficial</td>
+    <td class="hr-center">Preenchimento Online</td>
+    <td class="hr-right"><strong>{$appName}</strong></td>
+  </tr></table>
+</div>
+
+<div class="header-main">
+  <table><tr>
+    <td class="hm-logo"><div class="logo-box-wrap">{$logoCell}</div></td>
+    <td class="hm-title">
+      <div class="hm-kicker">Formul&aacute;rio Oficial</div>
+      <div class="hm-h1">Proposta para Fian&ccedil;a</div>
+      <span class="hm-sub">de Loca&ccedil;&atilde;o</span>
+      <div class="hm-desc">Preencha os dados do(s) fiador(es) para a proposta de loca&ccedil;&atilde;o</div>
+    </td>
+  </tr></table>
+</div>
+
+<div class="meta-strip">
+  <table><tr>
+    <td><span class="badge-num">N&ordm; PF-{$submId}</span> &nbsp;&nbsp; &#128197;&nbsp;{$submDate}</td>
+  </tr></table>
+</div>
+
+<div class="content">
+
+  <div class="section">
+    <div class="sec-head">Im&oacute;vel</div>
+    <table class="ft">
+      <tr>
+        <td colspan="3"><span class="fl">Im&oacute;vel situado</span><span class="fv">{$imovelSituado}</span></td>
+      </tr>
+      <tr class="alt">
+        <td><span class="fl">C&oacute;digo n&ordm;</span><span class="fv">{$codigo}</span></td>
+        <td><span class="fl">Bairro</span><span class="fv">{$bairroImovel}</span></td>
+        <td><span class="fl">Valor Mensal R$</span><span class="fv" style="font-weight:bold;color:#1a6e8e;">{$valorMensal}</span></td>
+      </tr>
+      <tr>
+        <td><span class="fl">Renda Familiar R$</span><span class="fv">{$rendaFamiliar}</span></td>
+        <td colspan="2"><span class="fl">Destina&ccedil;&atilde;o</span><span class="fv">{$destinacao}</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="sec-head">Dados do Primeiro Proponente</div>
+    <table class="ft">
+      <tr>
+        <td colspan="4"><span class="fl">Nome / Raz&atilde;o Social</span><span class="fv">{$p1Nome}</span></td>
+      </tr>
+      <tr class="alt">
+        <td><span class="fl">RG</span><span class="fv">{$p1Rg}</span></td>
+        <td><span class="fl">&Oacute;rg&atilde;o Emissor</span><span class="fv">{$p1Orgao}</span></td>
+        <td><span class="fl">Nascimento</span><span class="fv">{$p1Nasc}</span></td>
+        <td><span class="fl">CPF/CNPJ</span><span class="fv">{$p1Cpf}</span></td>
+      </tr>
+      <tr>
+        <td colspan="2"><span class="fl">Profiss&atilde;o/Atividade</span><span class="fv">{$p1Profissao}</span></td>
+        <td colspan="2"><span class="fl">Empresa onde trabalha</span><span class="fv">{$p1Empresa}</span></td>
+      </tr>
+      <tr class="alt">
+        <td colspan="4"><span class="fl">Estado Civil</span><span class="fv">{$p1Estado}</span></td>
+      </tr>
+      <tr>
+        <td colspan="2"><span class="fl">C&ocirc;njuge</span><span class="fv">{$p1Conjuge}</span></td>
+        <td><span class="fl">Nascimento</span><span class="fv">{$p1CnjNasc}</span></td>
+        <td><span class="fl">CPF</span><span class="fv">{$p1CnjCpf}</span></td>
+      </tr>
+      <tr class="alt">
+        <td><span class="fl">RG C&ocirc;njuge</span><span class="fv">{$p1CnjRg}</span></td>
+        <td colspan="3"><span class="fl">&Oacute;rg&atilde;o Emissor</span><span class="fv">{$p1CnjOrgao}</span></td>
+      </tr>
+      <tr>
+        <td colspan="3"><span class="fl">Endere&ccedil;o Atual</span><span class="fv">{$p1Endereco}</span></td>
+        <td><span class="fl">Complemento</span><span class="fv">{$p1Compl}</span></td>
+      </tr>
+      <tr class="alt">
+        <td><span class="fl">Bairro</span><span class="fv">{$p1Bairro}</span></td>
+        <td><span class="fl">Cidade</span><span class="fv">{$p1Cidade}</span></td>
+        <td><span class="fl">CEP</span><span class="fv">{$p1Cep}</span></td>
+        <td><span class="fl">UF</span><span class="fv">{$p1Uf}</span></td>
+      </tr>
+      <tr>
+        <td><span class="fl">Telefone 1</span><span class="fv">{$p1Tel1}</span></td>
+        <td><span class="fl">Telefone 2</span><span class="fv">{$p1Tel2}</span></td>
+        <td><span class="fl">Telefone 3</span><span class="fv">{$p1Tel3}</span></td>
+        <td></td>
+      </tr>
+      <tr class="alt">
+        <td colspan="2"><span class="fl">E-mail 1</span><span class="fv">{$p1Email1}</span></td>
+        <td colspan="2"><span class="fl">E-mail 2</span><span class="fv">{$p1Email2}</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="sec-head">Dados do Segundo Proponente</div>
+    <table class="ft">
+      <tr>
+        <td colspan="4"><span class="fl">Nome / Raz&atilde;o Social</span><span class="fv">{$p2Nome}</span></td>
+      </tr>
+      <tr class="alt">
+        <td><span class="fl">RG</span><span class="fv">{$p2Rg}</span></td>
+        <td><span class="fl">&Oacute;rg&atilde;o Emissor</span><span class="fv">{$p2Orgao}</span></td>
+        <td><span class="fl">Nascimento</span><span class="fv">{$p2Nasc}</span></td>
+        <td><span class="fl">CPF/CNPJ</span><span class="fv">{$p2Cpf}</span></td>
+      </tr>
+      <tr>
+        <td colspan="2"><span class="fl">Profiss&atilde;o/Atividade</span><span class="fv">{$p2Profissao}</span></td>
+        <td colspan="2"><span class="fl">Empresa onde trabalha</span><span class="fv">{$p2Empresa}</span></td>
+      </tr>
+      <tr class="alt">
+        <td colspan="4"><span class="fl">Estado Civil</span><span class="fv">{$p2Estado}</span></td>
+      </tr>
+      <tr>
+        <td colspan="2"><span class="fl">C&ocirc;njuge</span><span class="fv">{$p2Conjuge}</span></td>
+        <td><span class="fl">Nascimento</span><span class="fv">{$p2CnjNasc}</span></td>
+        <td><span class="fl">CPF</span><span class="fv">{$p2CnjCpf}</span></td>
+      </tr>
+      <tr class="alt">
+        <td><span class="fl">RG C&ocirc;njuge</span><span class="fv">{$p2CnjRg}</span></td>
+        <td colspan="3"><span class="fl">&Oacute;rg&atilde;o Emissor</span><span class="fv">{$p2CnjOrgao}</span></td>
+      </tr>
+      <tr>
+        <td colspan="3"><span class="fl">Endere&ccedil;o Atual</span><span class="fv">{$p2Endereco}</span></td>
+        <td><span class="fl">Complemento</span><span class="fv">{$p2Compl}</span></td>
+      </tr>
+      <tr class="alt">
+        <td><span class="fl">Bairro</span><span class="fv">{$p2Bairro}</span></td>
+        <td><span class="fl">Cidade</span><span class="fv">{$p2Cidade}</span></td>
+        <td><span class="fl">CEP</span><span class="fv">{$p2Cep}</span></td>
+        <td><span class="fl">UF</span><span class="fv">{$p2Uf}</span></td>
+      </tr>
+      <tr>
+        <td><span class="fl">Telefone 1</span><span class="fv">{$p2Tel1}</span></td>
+        <td><span class="fl">Telefone 2</span><span class="fv">{$p2Tel2}</span></td>
+        <td><span class="fl">Telefone 3</span><span class="fv">{$p2Tel3}</span></td>
+        <td></td>
+      </tr>
+      <tr class="alt">
+        <td colspan="2"><span class="fl">E-mail 1</span><span class="fv">{$p2Email1}</span></td>
+        <td colspan="2"><span class="fl">E-mail 2</span><span class="fv">{$p2Email2}</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="sec-head">Informa&ccedil;&otilde;es Complementares — 1&ordm; Proponente</div>
+    <table class="ft">
+      <tr>
+        <td colspan="2"><span class="fl">Nome</span><span class="fv">{$info1Nome}</span></td>
+        <td colspan="2"><span class="fl">Contatos</span><span class="fv">{$info1Contatos}</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="sec-head">Informa&ccedil;&otilde;es Complementares — 2&ordm; Proponente</div>
+    <table class="ft">
+      <tr>
+        <td colspan="2"><span class="fl">Nome</span><span class="fv">{$info2Nome}</span></td>
+        <td colspan="2"><span class="fl">Contatos</span><span class="fv">{$info2Contatos}</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="legal">
+    A presente proposta &eacute; apenas de interesse de participa&ccedil;&atilde;o na loca&ccedil;&atilde;o como fiador, n&atilde;o tendo valor contratual. Com seja aprovada, os dados nela contidos ser&atilde;o utilizados para confec&ccedil;&atilde;o do contrato de loca&ccedil;&atilde;o, onde estar&atilde;o estabelecidas as cl&aacute;usulas contratuais.
+  </div>
+
+  {$docsHtml}
+
+</div>
+
+<div class="footer">
+  <strong>{$appName}</strong> &nbsp;|&nbsp;
+  Av. Hermes Fontes, n&ordm; 1524, Bairro Luzia &ndash; CEP 49.048-010 &ndash; Aracaju/SE &nbsp;|&nbsp;
+  (79) 3304-0000 / 99691-0000 &nbsp;|&nbsp; contato@a4imobiliaria.com.br &nbsp;|&nbsp;
+  Gerado em: {$submDate}
+</div>
+
+</body>
+</html>
+HTML;
+}
+
+// ============================================================
 // HELPERS INTERNOS
 // ============================================================
 

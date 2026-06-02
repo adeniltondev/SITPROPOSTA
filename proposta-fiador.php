@@ -20,6 +20,7 @@ $logoPath = $settings['logo_path'] ?? '';
 $primaryColor = $settings['primary_color'] ?? '#0e4f6c';
 
 $slug = 'proposta-fiador';
+$db->query("UPDATE forms SET pdf_template = 'proposta-fiador' WHERE slug = ?", [$slug]);
 $form = $db->fetchOne('SELECT * FROM forms WHERE slug = ? LIMIT 1', [$slug]);
 if (!$form) {
     $db->query(
