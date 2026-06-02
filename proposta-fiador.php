@@ -67,11 +67,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$success) {
             }
         }
         if (empty($errors)) {
-            $uploaded = $_FILES['doc_anexo'] ?? null;
             $data['doc_anexo'] = '';
-            if ($uploaded && $uploaded['error'] === UPLOAD_ERR_OK && $uploaded['size'] > 0) {
-                $saved = uploadFile($uploaded, DOCS_PATH, ALLOWED_DOC_TYPES);
-                $data['doc_anexo'] = $saved ? 'docs/' . $saved : '';
+            $uploadedFiles = $_FILES['doc_anexo'] ?? null;
+            if ($uploadedFiles && is_array($uploadedFiles['name'])) {
+                $savedPaths = [];
+                foreach ($uploadedFiles['name'] as $i => $name) {
+                    if ($uploadedFiles['error'][$i] === UPLOAD_ERR_OK && $uploadedFiles['size'][$i] > 0) {
+                        $singleFile = [
+                            'name'     => $uploadedFiles['name'][$i],
+                            'type'     => $uploadedFiles['type'][$i],
+                            'tmp_name' => $uploadedFiles['tmp_name'][$i],
+                            'error'    => $uploadedFiles['error'][$i],
+                            'size'     => $uploadedFiles['size'][$i],
+                        ];
+                        $saved = uploadFile($singleFile, DOCS_PATH, ALLOWED_DOC_TYPES);
+                        if ($saved) $savedPaths[] = 'docs/' . $saved;
+                    }
+                }
+                $data['doc_anexo'] = implode(', ', $savedPaths);
             }
             $ip = getClientIP();
             $db->query(
@@ -1198,7 +1211,7 @@ function fRadio(string $n, string $v): string {
                         <label class="doc-label">Documentos</label>
                         <p style="margin-bottom:10px;">Solte os arquivos aqui ou</p>
                         <label class="upload-btn-label" for="doc_anexo_id">Anexar arquivos</label>
-                        <input id="doc_anexo_id" type="file" name="doc_anexo" accept=".jpg,.gif,.mp4,.pdf,.png,.doc,.docx,.xls,.xlsx" style="display:none;">
+                        <input id="doc_anexo_id" type="file" name="doc_anexo[]" accept=".jpg,.gif,.mp4,.pdf,.png,.doc,.docx,.xls,.xlsx" multiple style="display:none;">
                         <p>Tipos de arquivo aceitos: jpg, gif, mp4, pdf, png. Máx. tamanho do arquivo: 10 MB.</p>
                     </div>
                 </div>
