@@ -682,6 +682,12 @@ document.getElementById('doc_anexo_id').addEventListener('change', function() {
     preview.innerHTML = html;
 });
 
+function atualizarPrazo(destinacao) {
+    var sel = document.getElementById('prazo_meses');
+    if (!sel) return;
+    sel.value = (destinacao === 'Comercial') ? '60' : '36';
+}
+
 document.querySelectorAll('[data-mask]').forEach(function(el) {
     el.addEventListener('input', function() {
         var v = el.value.replace(/\D/g, '');
