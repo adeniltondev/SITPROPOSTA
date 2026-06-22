@@ -78,16 +78,14 @@ $flash = getFlash();
 
         .share-dropdown {
             display: none;
-            position: absolute;
-            left: calc(100% + 8px);
-            top: 0;
-            width: 280px;
+            position: fixed;
+            width: 300px;
             background: #fff;
             border: 1px solid var(--border);
             border-radius: 10px;
-            box-shadow: 0 8px 24px rgba(0,0,0,.12);
+            box-shadow: 0 8px 32px rgba(0,0,0,.16);
             padding: 14px;
-            z-index: 999;
+            z-index: 9999;
         }
         .share-dropdown.open { display: block; }
 
@@ -283,7 +281,21 @@ $flash = getFlash();
 
         btn.addEventListener('click', function(e){
             e.stopPropagation();
-            dd.classList.toggle('open');
+            var isOpen = dd.classList.contains('open');
+            dd.classList.remove('open');
+            if (!isOpen) {
+                var rect = btn.getBoundingClientRect();
+                dd.style.top  = rect.top + 'px';
+                dd.style.left = (rect.right + 8) + 'px';
+                // Evita sair da tela na vertical
+                dd.style.display = 'block';
+                var ddH = dd.offsetHeight;
+                dd.style.display = '';
+                if (rect.top + ddH > window.innerHeight - 10) {
+                    dd.style.top = Math.max(10, window.innerHeight - ddH - 10) + 'px';
+                }
+                dd.classList.add('open');
+            }
         });
 
         document.addEventListener('click', function(e){
