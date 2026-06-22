@@ -147,6 +147,35 @@ $flash = getFlash();
         }
         .btn-copy:hover { background: var(--primary-dark); }
         .btn-copy.copied { background: #10b981; }
+
+        .share-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .btn-share-action {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 8px;
+            font-size: .7rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity .15s;
+        }
+        .btn-share-action:hover { opacity: .85; text-decoration: none; }
+        .btn-share-action svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+        .btn-whatsapp { background: #25d366; color: #fff; }
+        .btn-email    { background: #64748b; color: #fff; }
+        .btn-copy-sm  { background: var(--primary); color: #fff; }
+        .btn-copy-sm.copied { background: #10b981; }
     </style>
 </head>
 <body class="admin-layout">
@@ -199,7 +228,23 @@ $flash = getFlash();
                     <span class="share-link-label">Proposta de Locação</span>
                     <div class="share-link-box">
                         <span title="https://propostadelocacao.a4imobiliaria.com.br/proposta-locacao.php">propostadelocacao.a4imobiliaria.com.br/proposta-locacao.php</span>
-                        <button class="btn-copy" data-url="https://propostadelocacao.a4imobiliaria.com.br/proposta-locacao.php">Copiar</button>
+                    </div>
+                    <div class="share-actions">
+                        <button class="btn-share-action btn-copy-sm" data-url="https://propostadelocacao.a4imobiliaria.com.br/proposta-locacao.php">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                            Copiar
+                        </button>
+                        <a class="btn-share-action btn-whatsapp"
+                           href="https://wa.me/?text=Preencha%20a%20Proposta%20de%20Loca%C3%A7%C3%A3o%3A%20https%3A%2F%2Fpropostadelocacao.a4imobiliaria.com.br%2Fproposta-locacao.php"
+                           target="_blank" rel="noopener">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+                            WhatsApp
+                        </a>
+                        <a class="btn-share-action btn-email"
+                           href="mailto:?subject=Proposta%20de%20Loca%C3%A7%C3%A3o&body=Ol%C3%A1%2C%20acesse%20o%20formul%C3%A1rio%20de%20Proposta%20de%20Loca%C3%A7%C3%A3o%3A%0Ahttps%3A%2F%2Fpropostadelocacao.a4imobiliaria.com.br%2Fproposta-locacao.php">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            E-mail
+                        </a>
                     </div>
                 </div>
 
@@ -207,7 +252,23 @@ $flash = getFlash();
                     <span class="share-link-label">Proposta de Fiador</span>
                     <div class="share-link-box">
                         <span title="https://propostadelocacao.a4imobiliaria.com.br/proposta-fiador.php">propostadelocacao.a4imobiliaria.com.br/proposta-fiador.php</span>
-                        <button class="btn-copy" data-url="https://propostadelocacao.a4imobiliaria.com.br/proposta-fiador.php">Copiar</button>
+                    </div>
+                    <div class="share-actions">
+                        <button class="btn-share-action btn-copy-sm" data-url="https://propostadelocacao.a4imobiliaria.com.br/proposta-fiador.php">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                            Copiar
+                        </button>
+                        <a class="btn-share-action btn-whatsapp"
+                           href="https://wa.me/?text=Preencha%20a%20Proposta%20de%20Fiador%3A%20https%3A%2F%2Fpropostadelocacao.a4imobiliaria.com.br%2Fproposta-fiador.php"
+                           target="_blank" rel="noopener">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+                            WhatsApp
+                        </a>
+                        <a class="btn-share-action btn-email"
+                           href="mailto:?subject=Proposta%20de%20Fiador&body=Ol%C3%A1%2C%20acesse%20o%20formul%C3%A1rio%20de%20Proposta%20de%20Fiador%3A%0Ahttps%3A%2F%2Fpropostadelocacao.a4imobiliaria.com.br%2Fproposta-fiador.php">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            E-mail
+                        </a>
                     </div>
                 </div>
             </div>
